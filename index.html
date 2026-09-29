@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Loves of My Life</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Big Loves">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#EDEFF1">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<style>
+:root{
+  --bg:#EDEFF1; --surface:#FFFFFF; --ink:#1B1F24; --muted:#5E6670; --line:#D6DAE0;
+  --ok:#2E7D4F; --warn:#B4541A; --bad:#B3261E; --soft:#F5F6F8;
+  --dog:#2F6B57; --dog-tint:rgba(47,107,87,.12);
+  --round: ui-rounded, "SF Pro Rounded", "Nunito", system-ui, sans-serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root{--bg:#15181B;--surface:#1F2327;--ink:#ECEFF2;--muted:#9AA3AD;--line:#343A41;--soft:#262B30;
+    --ok:#5BBE83;--warn:#E08A4F;--bad:#EF6C63;}
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:16px/1.45 var(--sans);
+  -webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--dog);outline-offset:2px}
+h1,h2,h3{font-family:var(--round);margin:0;letter-spacing:-.01em}
+h2{font-size:1.15rem;font-weight:700}
+h3{font-size:1rem;font-weight:650}
+.muted{color:var(--muted)}
+.small{font-size:.85rem}
+
+/* header: the dogs are the masthead */
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:10px 16px 8px;
+  border-bottom:1px solid var(--line)}
+.dogs{display:flex;gap:14px;align-items:flex-end}
+.dogbtn{border:0;background:none;padding:0;display:flex;flex-direction:column;align-items:center;gap:3px;opacity:.55;transition:opacity .15s}
+.dogbtn.on{opacity:1}
+.av{width:46px;height:46px;border-radius:50%;background:var(--soft) center/cover no-repeat;display:grid;place-items:center;
+  font:700 1.1rem var(--round);color:#fff;border:3px solid transparent}
+.dogbtn.on .av{width:60px;height:60px;border-color:var(--c);box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--c)}
+.dogbtn span{font:600 .8rem var(--round)}
+.dogbtn.on span{color:var(--c)}
+.headtitle{margin-left:auto;text-align:right}
+.headtitle b{display:block;font:700 1.35rem var(--round);color:var(--dog);line-height:1.1}
+
+main{padding:14px 14px 110px;max-width:720px;margin:0 auto}
+.card{background:var(--surface);border-radius:16px;padding:14px 14px;margin:0 0 12px;border:1px solid var(--line)}
+.card.accent{border-left:5px solid var(--dog)}
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between}
+.wrap{flex-wrap:wrap}
+.stack>*+*{margin-top:8px}
+
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:9px 14px;font-weight:600;min-height:44px}
+.btn.pri{background:var(--dog);border-color:var(--dog);color:#fff}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--bad);border-color:var(--bad)}
+.btn.sm{min-height:34px;padding:5px 10px;font-size:.88rem;border-radius:10px}
+.linkbtn{border:0;background:none;color:var(--dog);font-weight:600;padding:6px 0}
+
+.datebar{display:flex;align-items:center;justify-content:space-between;margin:0 0 12px}
+.datebar .d{font:700 1.2rem var(--round)}
+.iconbtn{border:1px solid var(--line);background:var(--surface);width:44px;height:44px;border-radius:12px;font-size:1.2rem}
+
+/* dose list */
+.slot{padding-top:6px}
+.slot+.slot{border-top:1px dashed var(--line);margin-top:8px;padding-top:10px}
+.slothead{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.slothead .t{font:700 1.05rem var(--round);font-variant-numeric:tabular-nums}
+.dose{display:flex;align-items:center;gap:10px;padding:6px 0;min-height:44px}
+.tick{width:34px;height:34px;flex:0 0 34px;border-radius:50%;border:2px solid var(--line);background:var(--surface);display:grid;place-items:center;font-size:1rem;color:#fff}
+.tick.given{background:var(--ok);border-color:var(--ok)}
+.tick.late{background:var(--warn);border-color:var(--warn)}
+.tick.missed,.tick.vomited{background:var(--bad);border-color:var(--bad)}
+.dose .lbl{flex:1;border:0;background:none;text-align:left;padding:0}
+.dose .lbl b{font-weight:600}
+.dose .lbl small{display:block;color:var(--muted);font-size:.84rem}
+.chip{display:inline-block;font-size:.76rem;font-weight:700;border-radius:999px;padding:2px 8px;background:var(--soft);color:var(--muted)}
+.chip.given{background:rgba(46,125,79,.14);color:var(--ok)}
+.chip.late{background:rgba(180,84,26,.14);color:var(--warn)}
+.chip.missed,.chip.vomited,.chip.H,.chip.L{background:rgba(179,38,30,.13);color:var(--bad)}
+.chip.dog{background:var(--dog-tint);color:var(--dog)}
+
+/* counters */
+.counter{display:flex;gap:14px;align-items:center}
+.counter .big{font:800 2rem/1 var(--round);color:var(--dog);min-width:58px;text-align:center}
+.counter .big small{display:block;font:600 .7rem var(--sans);color:var(--muted);margin-top:3px}
+.counter+.counter{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+
+/* quick taps */
+.taps{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}
+.tap{border:1px solid var(--line);background:var(--soft);border-radius:12px;min-height:52px;padding:8px;font-weight:600;font-size:.92rem}
+.tap:active{background:var(--dog-tint)}
+
+.meal{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;min-height:48px;width:100%;border:0;background:none;text-align:left}
+.meal+.meal{border-top:1px dashed var(--line)}
+.meal b{font-weight:600}
+
+.entry{display:flex;gap:10px;padding:9px 0;align-items:flex-start}
+.entry+.entry{border-top:1px dashed var(--line)}
+.entry .tm{font-variant-numeric:tabular-nums;color:var(--muted);min-width:46px;font-size:.9rem;padding-top:1px}
+.entry .body{flex:1;min-width:0}
+.entry button.x{border:0;background:none;color:var(--muted);font-size:1.1rem;padding:2px 6px}
+
+.banner{background:var(--dog-tint);border:1px solid var(--dog);border-radius:14px;padding:10px 12px;margin-bottom:12px;display:flex;gap:10px;align-items:center;justify-content:space-between}
+
+/* bloods */
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.mcard{border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:10px;text-align:left}
+.mcard .v{font:700 1.3rem var(--round);font-variant-numeric:tabular-nums}
+.mcard svg{display:block;width:100%;height:34px;margin-top:4px}
+details{border-top:1px solid var(--line)}
+details:first-of-type{border-top:0}
+summary{padding:12px 0;font:650 1rem var(--round);list-style:none;display:flex;justify-content:space-between}
+summary::after{content:"+";color:var(--muted)}
+details[open] summary::after{content:"−"}
+.mrow{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border:0;border-top:1px dashed var(--line);background:none;width:100%;text-align:left}
+.tbl{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.tbl td,.tbl th{padding:7px 4px;border-bottom:1px solid var(--line);text-align:left;font-size:.92rem}
+.tbl th{color:var(--muted);font-weight:600}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:var(--surface);padding:6px 12px;font-size:.88rem;font-weight:600}
+.seg button.on{background:var(--dog);color:#fff}
+
+/* tabs */
+nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);
+  display:flex;padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;border:0;background:none;padding:10px 0 12px;font:600 .78rem var(--round);color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px}
+nav button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav button.on{color:var(--dog)}
+
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.38);z-index:20;display:none}
+.scrim.open{display:block}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;background:var(--surface);border-radius:20px 20px 0 0;
+  max-height:88vh;overflow:auto;padding:8px 16px calc(20px + env(safe-area-inset-bottom,0px));transform:translateY(100%);transition:transform .22s ease;max-width:720px;margin:0 auto}
+.sheet:not(.open){visibility:hidden;transition:transform .22s ease,visibility 0s .22s}
+.sheet.open{transform:none}
+.slotrow{display:grid!important;grid-template-columns:136px 1fr 40px;gap:6px}
+.slotrow [data-f=label]{grid-column:1 / 3}
+.slotrow{border-bottom:1px dashed var(--line);padding-bottom:8px}
+.tick.idle{background:var(--soft)}
+.grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:4px auto 10px}
+label.f{display:block;font-size:.85rem;color:var(--muted);font-weight:600;margin:12px 0 4px}
+input.i,select.i,textarea.i{width:100%;border:1px solid var(--line);background:var(--soft);border-radius:10px;padding:10px;min-height:44px}
+textarea.i{min-height:80px;resize:vertical}
+.opts{display:flex;flex-wrap:wrap;gap:6px}
+.opt{border:1px solid var(--line);background:var(--soft);border-radius:999px;padding:8px 13px;font-weight:600;font-size:.9rem;min-height:40px}
+.opt.on{background:var(--dog);border-color:var(--dog);color:#fff}
+.actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.actions .btn{flex:1}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-weight:600;z-index:30;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
+.empty{padding:14px 2px;color:var(--muted)}
+.pre{white-space:pre-line}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header id="hdr"></header>
+<main id="view"></main>
+<nav id="tabs"></nav>
+<div class="scrim" id="scrim" data-act="closeSheet"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
+<div class="toast" id="toast"></div>
+<input type="file" id="photoIn" accept="image/*" hidden><input type="file" id="importIn" accept="application/json,.json" hidden>
+<script>
+'use strict';
+const APP_VERSION = '1.4.0';
+const KEY = 'bigloves-v1';
+
+/* ---------- utilities ---------- */
+const pad = n => String(n).padStart(2, '0');
+const dk = (d = new Date()) => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const parseDk = k => { const p = k.split('-').map(Number); return new Date(p[0], (p[1] || 1) - 1, p[2] || 1); };
+const addDays = (k, n) => { const d = parseDk(k); d.setDate(d.getDate() + n); return dk(d); };
+const addMonths = (k, n) => {
+  const d = parseDk(k); const day = d.getDate();
+  const t = new Date(d.getFullYear(), d.getMonth() + n, 1);
+  const last = new Date(t.getFullYear(), t.getMonth() + 1, 0).getDate();
+  t.setDate(Math.min(day, last)); return dk(t);
+};
+const diffDays = (a, b) => Math.round((parseDk(b) - parseDk(a)) / 86400000);
+const nowHM = () => { const d = new Date(); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+const uid = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+function fmtDate(k, withYear) {
+  if (!k) return '';
+  const p = k.split('-');
+  if (p.length === 2) return MONTHS[+p[1] - 1] + ' ' + p[0];
+  const d = parseDk(k);
+  let s = DAYS[d.getDay()] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()];
+  if (withYear || d.getFullYear() !== new Date().getFullYear()) s += ' ' + d.getFullYear();
+  return s;
+}
+function fmtShort(k) {
+  const p = k.split('-');
+  if (p.length === 2) return MONTHS[+p[1] - 1] + ' ' + p[0].slice(2);
+  return +p[2] + ' ' + MONTHS[+p[1] - 1] + ' ' + p[0].slice(2);
+}
+function ageText(dob) {
+  if (!dob) return '';
+  const p = dob.split('-').map(Number); const n = new Date();
+  let m = (n.getFullYear() - p[0]) * 12 + (n.getMonth() + 1 - p[1]);
+  const y = Math.floor(m / 12); m = m % 12;
+  return y + ' yrs' + (m ? ' ' + m + ' mths' : '');
+}
+function hexTint(hex, a) {
+  const h = hex.replace('#', ''); const r = parseInt(h.slice(0, 2), 16), g = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+/* ---------- empty start: personal data arrives via the starter file ---------- */
+function seed() {
+  return { v: 1, dogs: [], meds: [], injections: [], doses: [], symptoms: [], meals: [], foods: [], markers: [], bloods: {}, lastBackup: null, created: dk() };
+}
+/* ---------- persistence ---------- */
+let S;
+function load() {
+  try { const raw = localStorage.getItem(KEY); if (raw) { S = JSON.parse(raw); migrate(); return; } } catch (e) { console.error(e); }
+  S = seed(); migrate(); save();
+}
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(S)); }
+  catch (e) { toast('Could not save: phone storage may be full'); console.error(e); }
+}
+if (navigator.storage && navigator.storage.persist) { navigator.storage.persist().catch(() => {}); }
+
+/* ---------- ui state ---------- */
+const UI = { dog: '', tab: 'today', date: dk(), today: dk(), logDays: 30, bloodRange: 'all' };
+const dog = () => S.dogs.find(d => d.id === UI.dog) || S.dogs[0];
+const tickTime = sl => ((S.settings || {}).tickTime === 'now' && UI.date === UI.today) ? nowHM() : ((sl && sl.t) || nowHM());
+const hasDogs = () => S && S.dogs && S.dogs.length > 0;
+const dogMeds = id => S.meds.filter(m => m.dogId === id);
+
+/* ---------- schedule logic ---------- */
+function isDueOn(m, date) {
+  if (m.paused) return false;
+  const s = m.schedule || { type: 'daily' };
+  const d = parseDk(date);
+  switch (s.type) {
+    case 'daily': return true;
+    case 'alternate': return s.anchor ? ((diffDays(s.anchor, date) % 2) + 2) % 2 === 0 : true;
+    case 'monthly': return d.getDate() === +s.day;
+    case 'quarterly': return d.getDate() === +s.day && (s.months || []).includes(d.getMonth() + 1);
+    default: return false;
+  }
+}
+function lastDueOnOrBefore(m, date) {
+  for (let i = 0; i < 100; i++) { const k = addDays(date, -i); if (isDueOn(m, k)) return k; }
+  return null;
+}
+function nextDueAfter(m, date) {
+  for (let i = 1; i < 400; i++) { const k = addDays(date, i); if (isDueOn(m, k)) return k; }
+  return null;
+}
+function doseEntry(medId, date, slot) {
+  const list = S.doses.filter(x => x.medId === medId && x.date === date && x.slot === slot && ['given', 'late', 'missed', 'vomited'].includes(x.status));
+  return list.length ? list[list.length - 1] : null;
+}
+function lastGivenOnOrAfter(medId, date) {
+  return S.doses.filter(x => x.medId === medId && x.status !== 'missed' && x.date >= date && x.status !== 'vomited').sort((a, b) => a.date < b.date ? 1 : -1)[0] || null;
+}
+function schedText(m) {
+  const s = m.schedule || {};
+  const ord = n => n + (n % 10 === 1 && n !== 11 ? 'st' : n % 10 === 2 && n !== 12 ? 'nd' : n % 10 === 3 && n !== 13 ? 'rd' : 'th');
+  if (s.type === 'daily') return 'Daily';
+  if (s.type === 'alternate') return 'Every second day from ' + fmtDate(s.anchor, true);
+  if (s.type === 'monthly') return 'Monthly on the ' + ord(+s.day);
+  if (s.type === 'quarterly') return 'Quarterly on the ' + ord(+s.day) + ' of ' + (s.months || []).map(x => MONTHS[x - 1]).join(', ');
+  if (s.type === 'prn') return 'As needed';
+  return '';
+}
+function injDue(inj) {
+  const last = inj.doses.length ? inj.doses.map(x => x.date).sort().slice(-1)[0] : null;
+  if (!last) return { last: null };
+  const due = inj.unit === 'months' ? addMonths(last, +inj.every) : addDays(last, +inj.every);
+  return { last, due, since: diffDays(last, UI.today), until: diffDays(UI.today, due) };
+}
+
+/* ---------- toast + sheet ---------- */
+let toastT;
+function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 1800); }
+function openSheet(html) {
+  const sh = document.getElementById('sheet');
+  sh.innerHTML = '<div class="grab"></div>' + html; sh.scrollTop = 0;
+  document.getElementById('scrim').classList.add('open'); sh.classList.add('open');
+}
+function closeSheet() { document.getElementById('scrim').classList.remove('open'); document.getElementById('sheet').classList.remove('open'); }
+const $ = sel => document.querySelector('#sheet ' + sel);
+const $$ = sel => Array.from(document.querySelectorAll('#sheet ' + sel));
+function optVal(group) { const on = document.querySelector(`#sheet .opts[data-group="${group}"] .opt.on`); return on ? on.dataset.v : ''; }
+function optsHtml(group, options, selected, multi) {
+  return `<div class="opts" data-group="${group}" ${multi ? 'data-multi="1"' : ''}>` + options.map(o => {
+    const v = typeof o === 'string' ? o : o.v; const l = typeof o === 'string' ? o : o.l;
+    const on = multi ? (selected || []).includes(v) : selected === v;
+    return `<button type="button" class="opt${on ? ' on' : ''}" data-act="opt" data-v="${esc(v)}">${esc(l)}</button>`;
+  }).join('') + '</div>';
+}
+
+/* ---------- v1.1: appointments, day notes, meal detail, patterns ---------- */
+function migrate() {
+  if (!S) return;
+  S.settings = S.settings || {}; S.appts = S.appts || []; S.focus = S.focus || [];
+  if (!S.settings.wokeAdded) {
+    (S.dogs || []).forEach(d => {
+      const i = (d.symptoms || []).findIndex(s => s.id === 'panting');
+      if (i >= 0 && !d.symptoms.some(s => /^woke up$/i.test(s.label))) d.symptoms.splice(i + 1, 0, { id: 'woke', label: 'Woke up', extra: 'signs' });
+    });
+    S.settings.wokeAdded = true;
+  }
+  migrateSleep(); migrateRoutine(); S.dayNotes = S.dayNotes || {}; S.settings = S.settings || {};
+}
+const noteKey = (dogId, date) => dogId + '|' + date;
+
+/* Today: appointments + day note */
+function focusHtml(d) {
+  const f = S.focus.filter(x => x.dogId === d.id && !x.done);
+  return `<div class="card" style="border:2px solid var(--dog)"><div class="row between"><h2>Current focus</h2><button class="btn sm" data-act="focusOpen" data-id="">Add</button></div>` +
+    (f.length ? f.map(x => `<button class="mrow" data-act="focusOpen" data-id="${x.id}" style="border-top:${f[0] === x ? '0' : '1px dashed var(--line)'}"><span><span class="pre">${esc(x.text)}</span><br><span class="small muted">Since ${esc(fmtDate(x.start, true))}${x.notes ? '. ' + esc(x.notes.split('\n')[0]) : ''}</span></span><span class="muted">›</span></button>`).join('')
+      : `<p class="empty" style="padding-bottom:0">Nothing set. Add what you're working on, e.g. settling her appetite.</p>`) + `</div>`;
+}
+function openFocus(id) {
+  const x = id ? S.focus.find(f => f.id === id) : { text: '', start: UI.today, notes: '' };
+  openSheet(`<h2>${id ? 'Edit focus' : 'Add a focus'}</h2>
+    <label class="f">What we're focusing on</label><textarea class="i" id="fText" placeholder="e.g. Stabilise appetite">${esc(x.text)}</textarea>
+    <label class="f">Started</label><input class="i" type="date" id="fStart" value="${esc(x.start)}">
+    <label class="f">Thinking and progress notes</label><textarea class="i" id="fNotes" style="min-height:120px" placeholder="Current theory, what we're trying, what's changed">${esc(x.notes)}</textarea>
+    ${id ? `<label class="f">When it's sorted: outcome</label><input class="i" id="fOutcome" placeholder="e.g. appetite steady for 2 weeks">` : ''}
+    <div class="actions">${id ? `<button class="btn danger" data-act="focusDel" data-id="${id}">Delete</button><button class="btn" data-act="focusDone" data-id="${id}">Mark as done</button>` : ''}<button class="btn pri" data-act="focusSave" data-id="${id || ''}">Save</button></div>`);
+}
+function todayTopHtml(d, date) {
+  const isToday = date === UI.today;
+  const todays = S.appts.filter(a => a.dogId === d.id && a.date === date).sort((a, b) => (a.time || '') < (b.time || '') ? -1 : 1);
+  const upcoming = isToday ? S.appts.filter(a => a.dogId === d.id && a.date > date && a.date <= addDays(date, 14)).sort((a, b) => (a.date + (a.time || '')) < (b.date + (b.time || '')) ? -1 : 1) : [];
+  let h = focusHtml(d) + changesCardHtml(d, date);
+  h += `<div class="card"><div class="row between"><h2>Appointments</h2><button class="btn sm" data-act="apptOpen" data-id="">Add</button></div>`;
+  if (!todays.length && !upcoming.length) h += `<p class="empty" style="padding-bottom:0">Nothing ${isToday ? 'today or in the next two weeks' : 'on this day'}.</p>`;
+  h += todays.map(a => apptRow(a, false)).join('');
+  if (upcoming.length) h += `<h3 style="margin-top:10px" class="muted">Coming up</h3>` + upcoming.map(a => apptRow(a, true)).join('');
+  h += `</div>`;
+  const note = S.dayNotes[noteKey(d.id, date)] || '';
+  h += `<div class="card accent"><h2>Changes to routine or anything unusual</h2>
+    <textarea class="i" id="dayNote" data-dog="${d.id}" data-date="${date}" style="margin-top:8px" placeholder="e.g. fasted for bloods, meds given at a different time, off her food">${esc(note)}</textarea>
+    <p class="small muted" style="margin:6px 0 0">Saves automatically when you tap away.</p></div>`;
+  if (d.trackSleep) h += sleepCardHtml(d, date);
+  return h;
+}
+function apptRow(a, showDate) {
+  return `<button class="mrow" data-act="apptOpen" data-id="${a.id}"><span><b>${esc(a.type || 'Appointment')}</b>${a.with ? ' <span class="muted">with ' + esc(a.with) + '</span>' : ''}${a.note ? `<br><span class="small muted">${esc(a.note)}</span>` : ''}</span><span class="small muted" style="text-align:right">${showDate ? esc(fmtDate(a.date)) + '<br>' : ''}${esc(a.time || '')}</span></button>`;
+}
+function openAppt(id) {
+  const a = id ? S.appts.find(x => x.id === id) : { date: UI.date, time: '', type: 'Vet', with: '', note: '' };
+  openSheet(`<h2>${id ? 'Edit' : 'Add'} appointment</h2>
+    <label class="f">Type</label>${optsHtml('atype', ['Vet', 'Physio', 'Blood test', 'Grooming', 'Other'], a.type)}
+    <div class="row"><div style="flex:1"><label class="f">Date</label><input class="i" type="date" id="aDate" value="${esc(a.date)}"></div><div style="flex:1"><label class="f">Time</label><input class="i" type="time" id="aTime" value="${esc(a.time)}"></div></div>
+    <label class="f">With</label><input class="i" id="aWith" value="${esc(a.with)}" placeholder="e.g. vet or physio's name">
+    <label class="f">Notes or outcome</label><textarea class="i" id="aNote">${esc(a.note)}</textarea>
+    <div class="actions">${id ? `<button class="btn danger" data-act="apptDel" data-id="${id}">Delete</button>` : ''}<button class="btn" data-act="closeSheet">Cancel</button><button class="btn pri" data-act="apptSave" data-id="${id || ''}">Save</button></div>`);
+}
+
+/* Meals: per-food detail */
+const EAT_OPTS = [{ v: 'eager', l: 'Ate enthusiastically, licked bowl clean' }, { v: 'coaxed', l: 'Needed coaxing' }];
+const DISH_OPTS = [{ v: 'bowl', l: 'Normal food bowl' }, { v: 'shallow', l: 'Shallow dish' }];
+const ITEM_OUT = [{ v: 'all', l: 'Ate' }, { v: 'partial', l: 'Some' }, { v: 'refused', l: 'Left it' }];
+function mealItemsHtml(items) {
+  if (!items.length) return '<p class="small muted" style="margin:6px 0 0">Pick the foods above to record amounts and what was eaten.</p>';
+  return items.map(it => `<div class="fitem" data-food="${esc(it.food)}" style="border-top:1px dashed var(--line);padding:8px 0">
+    <div class="row between"><b class="small">${esc(it.food)}</b><input class="i" data-f="amount" value="${esc(it.amount || '')}" placeholder="Amount" style="width:130px;flex:0 0 130px;min-height:38px;padding:6px 8px"></div>
+    <div class="opts" data-group="fo" style="margin-top:6px">${ITEM_OUT.map(o => `<button type="button" class="opt${it.outcome === o.v ? ' on' : ''}" data-act="opt" data-v="${o.v}">${o.l}</button>`).join('')}</div></div>`).join('');
+}
+function readMealItems() {
+  return $$('.fitem').map(r => { const on = r.querySelector('.opt.on'); return { food: r.dataset.food, amount: r.querySelector('[data-f="amount"]').value.trim(), outcome: on ? on.dataset.v : '' }; });
+}
+function renderMealItems() {
+  const box = $('#mItems'); if (!box) return;
+  const current = {}; readMealItems().forEach(it => { current[it.food] = it; });
+  const chosen = $$('.opts[data-group="foods"] .opt.on').map(b => b.dataset.v);
+  box.innerHTML = mealItemsHtml(chosen.map(f => current[f] || { food: f, amount: '', outcome: '' }));
+}
+function mealItems(m) { return m.items && m.items.length ? m.items : (m.foods || []).map(f => ({ food: f, amount: '', outcome: '' })); }
+function mealFoodsText(m) {
+  const it = mealItems(m); if (!it.length) return 'Food not noted';
+  return it.map(x => x.food + (x.amount ? ' (' + x.amount + ')' : '') + (x.outcome === 'refused' ? ': left it' : x.outcome === 'partial' ? ': some' : '')).join(', ');
+}
+function mealSummaryHtml(m) {
+  const d = S.dogs.find(x => x.id === m.dogId); const sl = d && d.mealSlots.find(x => x.id === m.slot);
+  const tags = [];
+  if (m.sprinkles) tags.push(m.sprinkles === 'yes' ? 'Sprinkles' : 'No sprinkles');
+  if (m.eat) tags.push((EAT_OPTS.find(o => o.v === m.eat) || {}).l);
+  if (m.dish) tags.push((DISH_OPTS.find(o => o.v === m.dish) || {}).l);
+  return `<b>${esc(sl ? sl.label : 'Meal')}</b> ${outcomeChip(m.outcome)}<div class="small">${esc(mealFoodsText(m))}</div>${tags.length ? `<div class="small muted">${esc(tags.join('. '))}</div>` : ''}${m.note ? `<div class="small muted pre">${esc(m.note)}</div>` : ''}`;
+}
+
+/* Symptoms: actions and resolution */
+const SIGN_OPTS = ['Lip-licking', 'Swallowing', 'Gulping', 'Gagging', 'Panting', 'Restless or pacing', 'Wandering', 'Whining', 'Wanted to go outside', 'Nothing obvious'];
+const hasSigns = def => def && (def.extra === 'signs' || /^woke up$/i.test(def.label || ''));
+const ACTION_OPTS = ['Nothing', 'Comforted and settled her', 'Gave medication', 'Changed food', 'Took her outside', 'Called the vet', 'Other'];
+function minsBetween(a, b) {
+  if (!a || !b) return null; const [h1, m1] = a.split(':').map(Number); const [h2, m2] = b.split(':').map(Number);
+  let d = (h2 * 60 + m2) - (h1 * 60 + m1); if (d < 0) d += 1440; return d;
+}
+function durText(min) { if (min == null) return ''; if (min < 60) return min + ' min'; const h = Math.floor(min / 60), m = min % 60; return h + ' hr' + (m ? ' ' + m + ' min' : ''); }
+
+/* ---------- Log: modes ---------- */
+function viewLog() {
+  const mode = UI.logMode || 'entries';
+  let h = `<div class="seg" style="margin-bottom:12px;display:flex">${[['entries', 'Entries'], ['days', 'By day'], ['links', 'Links']].map(([v, l]) => `<button style="flex:1" class="${mode === v ? 'on' : ''}" data-act="logMode" data-v="${v}">${l}</button>`).join('')}</div>`;
+  if (mode === 'days') return h + viewLogDays();
+  if (mode === 'links') return h + viewLinks();
+  return h + viewLogEntries();
+}
+function dayBits(d, date) {
+  const meals = S.meals.filter(m => m.dogId === d.id && m.date === date);
+  const eaten = [], some = [], left = [];
+  meals.forEach(m => mealItems(m).forEach(it => {
+    const o = it.outcome || m.outcome;
+    const label = it.food + (it.amount ? ' (' + it.amount + ')' : '');
+    if (o === 'refused') left.push(label); else if (o === 'partial') some.push(label); else eaten.push(label);
+  }));
+  const syms = S.symptoms.filter(s => s.dogId === d.id && s.date === date);
+  const doses = S.doses.filter(x => x.dogId === d.id && x.date === date);
+  const issues = doses.filter(x => ['missed', 'vomited', 'late', 'extra'].includes(x.status));
+  let expected = 0, logged = 0;
+  dogMeds(d.id).filter(m => !['monthly', 'quarterly', 'prn'].includes((m.schedule || {}).type) && isDueOn(m, date)).forEach(m => m.slots.forEach((sl, i) => { if (isHeld(m, date, sl)) return; expected++; const e = doseEntry(m.id, date, i); if (e && (e.status === 'given' || e.status === 'late')) logged++; }));
+  const changes = changesOnDay(d.id, date);
+  return { changes, meals, eaten, some, left, syms, issues, expected, logged, note: S.dayNotes[noteKey(d.id, date)] || '', appts: S.appts.filter(a => a.dogId === d.id && a.date === date) };
+}
+function viewLogDays() {
+  const d = dog(); const n = Math.min(UI.logDays, 60); let h = '';
+  for (let i = 0; i < n; i++) {
+    const date = addDays(UI.today, -i); const b = dayBits(d, date);
+    const empty = !b.changes.length && !(d.trackSleep && sleepsOn(d.id, date).length) && !b.meals.length && !b.syms.length && !b.issues.length && !b.logged && !b.note && !b.appts.length;
+    if (empty) continue;
+    const line = (label, text, color) => text ? `<div class="entry"><span class="tm" style="min-width:74px;color:${color || 'var(--muted)'}">${label}</span><div class="body small">${text}</div></div>` : '';
+    h += `<div class="card"><h3>${esc(fmtDate(date))}</h3>` +
+      line('Changes', b.changes.map(c => esc(changeTitle(c))).join('; '), 'var(--warn)') +
+      line('Note', b.note ? `<span class="pre">${esc(b.note)}</span>` : '') +
+      line('Appts', b.appts.map(a => esc(a.type + (a.time ? ' ' + a.time : ''))).join(', ')) +
+      line('Ate', esc(b.eaten.join(', ')), 'var(--ok)') +
+      line('Some', esc(b.some.join(', ')), 'var(--warn)') +
+      line('Left', esc(b.left.join(', ')), 'var(--bad)') +
+      line('Symptoms', b.syms.map(s => esc((s.type === 'other' && s.custom ? s.custom : symLabel(d.id, s.type)) + ([s.kind, s.side].filter(Boolean).length ? ' (' + [s.kind, s.side].filter(Boolean).join(', ') + ')' : '') + (s.time ? ' ' + s.time : ''))).join(', '), 'var(--dog)') +
+      (d.trackSleep ? line('Sleep', (() => { const st = sleepStats(d.id, date); return st.n ? `${st.n} sleeps, ${durText(st.total)} total, longest ${durText(st.longest)}, average ${durText(st.avg)}${st.deep ? ', deep ' + durText(st.deep) : ''}` : ''; })(), 'var(--dog)') : '') +
+      line('Doses', (b.expected ? `${b.logged} of ${b.expected} logged` : '') + (b.issues.length ? (b.expected ? '. ' : '') + b.issues.map(x => esc(medName(x.medId).split(' (')[0] + ' ' + ({ missed: 'missed', vomited: 'vomited', late: 'late', extra: 'extra' })[x.status])).join(', ') : '')) +
+      `</div>`;
+  }
+  if (!h) h = `<div class="card"><p class="empty">Nothing logged yet. Each day you log appears here as one summary.</p></div>`;
+  return h + `<p class="small muted" style="text-align:center">Showing the last ${n} days.</p>`;
+}
+function stamp(date, time) { const p = date.split('-').map(Number); const [hh, mm] = (time || '12:00').split(':').map(Number); return new Date(p[0], p[1] - 1, p[2], hh, mm).getTime(); }
+function viewLinks() {
+  const d = dog();
+  const types = d.symptoms.filter(t => S.symptoms.some(s => s.dogId === d.id && s.type === t.id));
+  let h = `<div class="card"><h2>Look for links</h2><p class="small muted" style="margin:4px 0 10px">Pick a symptom to see what was eaten, missed or changed in the hours before each time it happened.</p>`;
+  if (!types.length) return h + `<p class="empty">Log a few symptoms first and they will appear here.</p></div>`;
+  const sel = types.find(t => t.id === UI.linkSym) ? UI.linkSym : types[0].id;
+  const win = UI.linkWin || 24;
+  h += `<div class="opts">${types.map(t => `<button class="opt${t.id === sel ? ' on' : ''}" data-act="linkSym" data-v="${t.id}">${esc(t.label)}</button>`).join('')}</div>
+    <label class="f">Look back</label><div class="seg">${[6, 12, 24, 48].map(w => `<button class="${w === win ? 'on' : ''}" data-act="linkWin" data-v="${w}">${w} hrs</button>`).join('')}</div></div>`;
+  const occ = S.symptoms.filter(s => s.dogId === d.id && s.type === sel).sort((a, b) => stamp(b.date, b.time) - stamp(a.date, a.time));
+  const W = win * 3600000;
+  const foodHits = {}, doseHits = {}, rows = [];
+  occ.forEach(s => {
+    const t = stamp(s.date, s.time); const seenF = new Set(), seenD = new Set(); const ctx = [];
+    S.meals.filter(m => m.dogId === d.id).forEach(m => {
+      const sl = d.mealSlots.find(x => x.id === m.slot); const mt = stamp(m.date, m.time || (sl && sl.time));
+      if (mt <= t && mt >= t - W) mealItems(m).forEach(it => { const o = it.outcome || m.outcome; if (o !== 'refused') { seenF.add(it.food); ctx.push(it.food + (o === 'partial' ? ' (some)' : '')); } });
+    });
+    S.doses.filter(x => x.dogId === d.id && ['missed', 'vomited', 'late', 'extra'].includes(x.status)).forEach(x => {
+      const xt = stamp(x.date, x.time); if (xt <= t && xt >= t - W) { const k = medName(x.medId).split(' (')[0] + ' ' + x.status; seenD.add(k); ctx.push(k); }
+    });
+    changesAt(d.id, t).forEach(c => { const k = 'Change: ' + changeTitle(c); seenD.add(k); ctx.push(k); });
+    [addDays(s.date, -1), s.date].forEach(k => { const n = S.dayNotes[noteKey(d.id, k)]; if (n && (k === s.date || win > 12)) ctx.push('Note: ' + n); });
+    seenF.forEach(f => foodHits[f] = (foodHits[f] || 0) + 1); seenD.forEach(k => doseHits[k] = (doseHits[k] || 0) + 1);
+    rows.push({ s, ctx });
+  });
+  // baseline: share of logged days each food was eaten
+  const days = new Set(S.meals.filter(m => m.dogId === d.id).map(m => m.date)); const foodDays = {};
+  S.meals.filter(m => m.dogId === d.id).forEach(m => mealItems(m).forEach(it => { if ((it.outcome || m.outcome) !== 'refused') (foodDays[it.food] = foodDays[it.food] || new Set()).add(m.date); }));
+  const N = occ.length;
+  const pct = (a, b) => b ? Math.round(a / b * 100) + '%' : '';
+  h += `<div class="card"><h2>${esc(symLabel(d.id, sel))}: ${N} time${N === 1 ? '' : 's'}</h2>`;
+  const fk = Object.keys(foodHits).sort((a, b) => foodHits[b] - foodHits[a]);
+  if (fk.length) {
+    h += `<h3 style="margin-top:10px">Foods eaten in the ${win} hrs before</h3><table class="tbl"><tr><th>Food</th><th>Before symptom</th><th>All logged days</th></tr>` +
+      fk.map(f => `<tr><td>${esc(f)}</td><td>${foodHits[f]} of ${N} (${pct(foodHits[f], N)})</td><td class="muted">${foodDays[f] ? foodDays[f].size : 0} of ${days.size} (${pct(foodDays[f] ? foodDays[f].size : 0, days.size)})</td></tr>`).join('') + `</table>`;
+  }
+  const signs = {}; occ.forEach(s => (s.signs || []).forEach(g => signs[g] = (signs[g] || 0) + 1));
+  const sk = Object.keys(signs).sort((a, b) => signs[b] - signs[a]);
+  if (sk.length) h += `<h3 style="margin-top:14px">What you noticed</h3><table class="tbl">` + sk.map(g => `<tr><td>${esc(g)}</td><td>${signs[g]} of ${N} (${pct(signs[g], N)})</td></tr>`).join('') + `</table>`;
+  const dk2 = Object.keys(doseHits).sort((a, b) => doseHits[b] - doseHits[a]);
+  if (dk2.length) h += `<h3 style="margin-top:14px">Dose problems and routine changes in the ${win} hrs before</h3><table class="tbl">` + dk2.map(k => `<tr><td>${esc(k)}</td><td>${doseHits[k]} of ${N}</td></tr>`).join('') + `</table>`;
+  if (!fk.length && !dk2.length) h += `<p class="empty">No meals or dose problems logged in that window before these episodes.</p>`;
+  h += `<p class="small muted" style="margin:12px 0 0">A food that shows up far more often before the symptom than on ordinary days is worth mentioning to the vet. With only a handful of episodes these numbers can easily mislead, and none of them shows that one thing caused another.</p></div>`;
+  h += `<div class="card"><h2>Each time</h2>` + rows.map(r => `<div class="entry"><span class="tm" style="min-width:74px">${esc(fmtShort(r.s.date))}<br>${esc(r.s.time || '')}</span><div class="body small">${r.ctx.length ? esc(r.ctx.join(', ')) : '<span class="muted">Nothing logged in the window</span>'}</div></div>`).join('') + `</div>`;
+  return h;
+}
+
+/* ---------- v1.3: sleep tracking ---------- */
+const SLEEP_TYPES = [{ v: 'light', l: 'Light / dozing' }, { v: 'settled', l: 'Settled' }, { v: 'deep', l: 'Deep, snoring' }];
+function migrateSleep() {
+  S.sleeps = S.sleeps || [];
+  if (!S.settings.sleepAdded) {
+    (S.dogs || []).forEach(d => { if ((d.symptoms || []).some(s => s.id === 'panting')) d.trackSleep = true; });
+    S.settings.sleepAdded = true;
+  }
+}
+const sleepStart = x => stamp(x.startDate, x.startTime);
+const sleepEnd = x => x.endDate ? stamp(x.endDate, x.endTime) : Date.now();
+const sleepMins = x => Math.max(0, Math.round((sleepEnd(x) - sleepStart(x)) / 60000));
+function activeSleep(dogId) { return S.sleeps.find(x => x.dogId === dogId && !x.endDate); }
+function sleepsOn(dogId, date) {
+  const d0 = stamp(date, '00:00'), d1 = d0 + 86400000;
+  return S.sleeps.filter(x => x.dogId === dogId && sleepStart(x) < d1 && sleepEnd(x) > d0).sort((a, b) => sleepStart(a) - sleepStart(b));
+}
+function sleepStats(dogId, date) {
+  const d0 = stamp(date, '00:00'), d1 = d0 + 86400000;
+  const list = sleepsOn(dogId, date).filter(x => x.endDate);
+  const mins = list.map(x => Math.round((Math.min(sleepEnd(x), d1) - Math.max(sleepStart(x), d0)) / 60000));
+  const total = mins.reduce((a, b) => a + b, 0);
+  const full = list.map(sleepMins);
+  const deep = list.filter(x => x.type === 'deep').reduce((a, x) => a + (+x.deepMins || sleepMins(x)), 0);
+  return { n: list.length, total, longest: full.length ? Math.max(...full) : 0, avg: full.length ? Math.round(full.reduce((a, b) => a + b, 0) / full.length) : 0, deep };
+}
+function sleepBar(dogId, date) {
+  const d0 = stamp(date, '00:00'); const W = 340, H = 30;
+  let s = `<svg viewBox="0 0 ${W} ${H + 14}" style="width:100%;height:auto;display:block;margin-top:8px" aria-label="Sleep timeline"><rect x="0" y="0" width="${W}" height="${H}" rx="6" fill="var(--soft)"/>`;
+  sleepsOn(dogId, date).forEach(x => {
+    const a = Math.max(0, (sleepStart(x) - d0) / 86400000), b = Math.min(1, (sleepEnd(x) - d0) / 86400000);
+    const col = x.type === 'deep' ? 'var(--dog)' : x.type === 'settled' ? hexTint(dog().color, .55) : hexTint(dog().color, .28);
+    s += `<rect x="${a * W}" y="0" width="${Math.max(1.5, (b - a) * W)}" height="${H}" fill="${col}"${x.endDate ? '' : ' opacity=".6"'}/>`;
+  });
+  [0, 6, 12, 18, 24].forEach(hh => { const x = hh / 24 * W; s += `<text x="${Math.min(W - 2, Math.max(2, x))}" y="${H + 12}" font-size="9" fill="var(--muted)" text-anchor="${hh === 0 ? 'start' : hh === 24 ? 'end' : 'middle'}">${pad(hh % 24)}:00</text>`; });
+  return s + `</svg>`;
+}
+function sleepCardHtml(d, date) {
+  const act = activeSleep(d.id); const isToday = date === UI.today;
+  let h = `<div class="card"><div class="row between"><h2>Sleep</h2><button class="btn sm" data-act="sleepOpen" data-id="">Add past sleep</button></div>`;
+  if (isToday) {
+    h += act
+      ? `<div class="row between" style="margin-top:10px"><div><b>Asleep since ${esc(act.startTime)}</b><div class="small muted" id="sleepTimer" data-start="${sleepStart(act)}">${durText(sleepMins(act))} so far</div></div><button class="btn pri" data-act="sleepEnd" data-id="${act.id}">She woke up</button></div>`
+      : `<div class="row between" style="margin-top:10px"><span class="small muted">Tap when she drops off, then again when she wakes.</span><button class="btn pri" data-act="sleepStart">She's asleep</button></div>`;
+  }
+  const st = sleepStats(d.id, date); const list = sleepsOn(d.id, date);
+  h += sleepBar(d.id, date);
+  if (st.n) h += `<p class="small" style="margin:6px 0 0">${st.n} sleep${st.n === 1 ? '' : 's'}, ${durText(st.total)} in total. Longest ${durText(st.longest)}, average ${durText(st.avg)}${st.deep ? '. Deep and snoring ' + durText(st.deep) : ''}.</p>`;
+  h += `<p class="small muted" style="margin:4px 0 0">Pale: light. Mid: settled. Dark: deep and snoring.</p>`;
+  if (list.length) h += `<div style="margin-top:6px">` + list.map(x => `<div class="entry"><span class="tm" style="min-width:92px">${esc(x.startTime)}${x.endDate ? '–' + esc(x.endTime) : ''}</span><div class="body small">${x.endDate ? durText(sleepMins(x)) : 'still asleep'}${x.type ? ', ' + esc((SLEEP_TYPES.find(t => t.v === x.type) || {}).l.toLowerCase()) : ''}${x.deepMins ? ' (deep ' + esc(x.deepMins) + ' min)' : ''}${x.signs && x.signs.length ? `<div class="muted">Woke with: ${esc(x.signs.join(', '))}</div>` : ''}</div><button class="x" data-act="sleepOpen" data-id="${x.id}" aria-label="Edit">⋯</button></div>`).join('') + `</div>`;
+  return h + `</div>`;
+}
+function openSleep(id, endingNow) {
+  const d = dog(); const x = id ? S.sleeps.find(s => s.id === id) : { startDate: UI.date, startTime: '', endDate: UI.date, endTime: '', type: '', deepMins: '', signs: [], actions: [], note: '' };
+  const endDate = endingNow ? UI.today : (x.endDate || UI.date); const endTime = endingNow ? nowHM() : (x.endTime || '');
+  const hasWoke = d.symptoms.some(s => s.id === 'woke' || /^woke up$/i.test(s.label));
+  openSheet(`<h2>${endingNow ? 'She woke up' : id ? 'Edit sleep' : 'Add a sleep'}</h2>
+    <div class="row"><div style="flex:1"><label class="f">Fell asleep</label><input class="i" type="date" id="zSD" value="${esc(x.startDate)}"></div><div style="flex:1"><label class="f">at</label><input class="i" type="time" id="zST" value="${esc(x.startTime)}"></div></div>
+    <div class="row"><div style="flex:1"><label class="f">Woke</label><input class="i" type="date" id="zED" value="${esc(endDate)}"></div><div style="flex:1"><label class="f">at</label><input class="i" type="time" id="zET" value="${esc(endTime)}"></div></div>
+    <label class="f">What kind of sleep</label>${optsHtml('ztype', SLEEP_TYPES, x.type || '')}
+    <label class="f">Minutes of deep, snoring sleep (if only part of it)</label><input class="i" type="number" inputmode="numeric" id="zDeep" value="${esc(x.deepMins || '')}" placeholder="Optional">
+    <label class="f">What woke her / what I noticed</label>${optsHtml('zsigns', SIGN_OPTS, x.signs || [], true)}
+    <label class="f">What did we do</label>${optsHtml('zact', ACTION_OPTS, x.actions || [], true)}
+    <label class="f">Note</label><textarea class="i" id="zNote">${esc(x.note || '')}</textarea>
+    ${hasWoke ? '<p class="small muted">Saving also logs a "Woke up" entry at the wake time, so it shows in Links.</p>' : ''}
+    <div class="actions">${id && !endingNow ? `<button class="btn danger" data-act="sleepDel" data-id="${id}">Delete</button>` : ''}<button class="btn" data-act="closeSheet">Cancel</button><button class="btn pri" data-act="sleepSave" data-id="${id || ''}">Save</button></div>`);
+}
+function syncWoke(x) {
+  const d = S.dogs.find(g => g.id === x.dogId); const def = d && d.symptoms.find(s => s.id === 'woke' || /^woke up$/i.test(s.label));
+  let sym = S.symptoms.find(s => s.sleepId === x.id);
+  if (!def || !x.endDate) { if (sym) S.symptoms = S.symptoms.filter(s => s !== sym); return; }
+  const data = { date: x.endDate, time: x.endTime, signs: x.signs || [], actions: x.actions || [], note: x.note || '' };
+  if (sym) Object.assign(sym, data); else S.symptoms.push(Object.assign({ id: uid(), dogId: x.dogId, type: def.id, sleepId: x.id }, data));
+}
+const SLEEP_ACTIONS = {
+  sleepStart: () => { const t = nowHM(); S.sleeps.push({ id: uid(), dogId: UI.dog, startDate: UI.today, startTime: t, endDate: '', endTime: '' }); save(); render(); toast('Asleep from ' + t); },
+  sleepEnd: el => openSleep(el.dataset.id, true),
+  sleepOpen: el => openSleep(el.dataset.id || null, false),
+  sleepSave: el => {
+    const sd = $('#zSD').value, st = $('#zST').value, ed = $('#zED').value, et = $('#zET').value;
+    if (!sd || !st) return toast('Add when she fell asleep');
+    if ((ed && !et) || (et && !ed)) return toast('Add both the wake date and time');
+    if (ed && stamp(ed, et) < stamp(sd, st)) return toast('Wake time is before she fell asleep');
+    const data = { startDate: sd, startTime: st, endDate: ed || '', endTime: et || '', type: optVal('ztype'), deepMins: $('#zDeep').value.trim(), signs: $$('.opts[data-group="zsigns"] .opt.on').map(b => b.dataset.v), actions: $$('.opts[data-group="zact"] .opt.on').map(b => b.dataset.v), note: $('#zNote').value.trim() };
+    let x = el.dataset.id ? S.sleeps.find(s => s.id === el.dataset.id) : null;
+    if (x) Object.assign(x, data); else { x = Object.assign({ id: uid(), dogId: UI.dog }, data); S.sleeps.push(x); }
+    syncWoke(x); save(); closeSheet(); render(); toast(x.endDate ? 'Slept ' + durText(sleepMins(x)) : 'Sleep saved');
+  },
+  sleepDel: el => { if (!confirm('Delete this sleep?')) return; S.symptoms = S.symptoms.filter(s => s.sleepId !== el.dataset.id); S.sleeps = S.sleeps.filter(s => s.id !== el.dataset.id); save(); closeSheet(); render(); }
+};
+setInterval(() => { const t = document.getElementById('sleepTimer'); if (t) t.textContent = durText(Math.round((Date.now() - +t.dataset.start) / 60000)) + ' so far'; }, 30000);
+
+/* ---------- v1.4: base routine and routine changes ---------- */
+const CHANGE_KINDS = [{ v: 'hold', l: 'Hold doses' }, { v: 'swap', l: 'Change food' }, { v: 'other', l: 'Other change' }];
+function migrateRoutine() { S.changes = S.changes || []; }
+const chFrom = c => stamp(c.fromDate, c.fromTime || '00:00');
+const chUntil = c => c.untilDate ? stamp(c.untilDate, c.untilTime || '23:59') : Infinity;
+function changesAt(dogId, t) { return S.changes.filter(c => c.dogId === dogId && chFrom(c) <= t && chUntil(c) >= t); }
+function changesOnDay(dogId, date) {
+  const d0 = stamp(date, '00:00'), d1 = stamp(date, '23:59');
+  return S.changes.filter(c => c.dogId === dogId && chFrom(c) <= d1 && chUntil(c) >= d0);
+}
+function isHeld(med, date, slot) {
+  const t = stamp(date, (slot && slot.t) || '12:00');
+  return changesAt(med.dogId, t).some(c => c.kind === 'hold' && (c.medIds || []).includes(med.id));
+}
+function plannedFoods(d, slotId, date) {
+  const sl = d.mealSlots.find(x => x.id === slotId); if (!sl) return [];
+  const t = stamp(date, sl.time || '12:00');
+  const swap = changesAt(d.id, t).filter(c => c.kind === 'swap' && (c.slotIds || []).includes(slotId)).pop();
+  return swap ? (swap.foods || []) : (sl.usual || []);
+}
+function changeTitle(c) {
+  if (c.kind === 'hold') {
+    const ms = (c.medIds || []).map(id => S.meds.find(m => m.id === id)).filter(Boolean);
+    const supps = ms.filter(m => m.cat !== 'med').length, meds = ms.length - supps;
+    return 'Holding ' + [supps ? supps + ' supplement' + (supps === 1 ? '' : 's') : '', meds ? meds + ' medication' + (meds === 1 ? '' : 's') : ''].filter(Boolean).join(' and ');
+  }
+  if (c.kind === 'swap') { const d = S.dogs.find(x => x.id === c.dogId); const sl = (c.slotIds || []).map(id => (d.mealSlots.find(s => s.id === id) || {}).label).filter(Boolean); return (c.foods || []).join(', ') + ' for ' + (sl.join(', ') || 'meals').toLowerCase(); }
+  return c.note ? c.note.split('\n')[0] : 'Other change';
+}
+function changePeriod(c) {
+  const f = fmtDate(c.fromDate) + (c.fromTime ? ' ' + c.fromTime : '');
+  return c.untilDate ? f + ' to ' + fmtDate(c.untilDate) + (c.untilTime ? ' ' + c.untilTime : '') : 'From ' + f + ', no end set';
+}
+function changeRow(c) {
+  return `<button class="mrow" data-act="changeOpen" data-id="${c.id}"><span><b>${esc(changeTitle(c))}</b><br><span class="small muted">${esc(changePeriod(c))}${c.kind !== 'other' && c.note ? '. ' + esc(c.note.split('\n')[0]) : ''}</span></span><span class="muted">›</span></button>`;
+}
+function changesCardHtml(d, date) {
+  const list = changesOnDay(d.id, date);
+  let h = `<div class="card"><div class="row between"><h2>Routine changes</h2><button class="btn sm" data-act="changeOpen" data-id="">Add</button></div>`;
+  h += list.length ? list.map(changeRow).join('') : `<p class="empty" style="padding-bottom:0">Normal routine${date === UI.today ? ' today' : ' this day'}.</p>`;
+  return h + `</div>`;
+}
+function openChange(id) {
+  const d = dog(); const c = id ? S.changes.find(x => x.id === id) : { kind: 'hold', fromDate: UI.date, fromTime: '', untilDate: '', untilTime: '', medIds: [], slotIds: [], foods: [], note: '' };
+  const daily = dogMeds(d.id).filter(m => !m.paused && !['prn', 'monthly', 'quarterly'].includes((m.schedule || {}).type));
+  openSheet(`<h2>${id ? 'Edit' : 'Add'} routine change</h2>
+    <label class="f">Type</label>${optsHtml('ckind', CHANGE_KINDS, c.kind)}
+    <div class="row"><div style="flex:1"><label class="f">From</label><input class="i" type="date" id="cFD" value="${esc(c.fromDate)}"></div><div style="flex:1"><label class="f">at (optional)</label><input class="i" type="time" id="cFT" value="${esc(c.fromTime)}"></div></div>
+    <div class="row"><div style="flex:1"><label class="f">Until (blank = ongoing)</label><input class="i" type="date" id="cUD" value="${esc(c.untilDate)}"></div><div style="flex:1"><label class="f">at (optional)</label><input class="i" type="time" id="cUT" value="${esc(c.untilTime)}"></div></div>
+    <div data-ck="hold"><label class="f">Which doses to hold</label>
+      <div class="row wrap" style="gap:6px;margin-bottom:6px"><button class="btn sm" data-act="holdPick" data-v="supp">All supplements</button><button class="btn sm" data-act="holdPick" data-v="med">All medications</button><button class="btn sm" data-act="holdPick" data-v="none">Clear</button></div>
+      ${optsHtml('cmeds', daily.map(m => ({ v: m.id, l: m.name.split(' (')[0] })), c.medIds || [], true)}
+      <p class="small muted">Held doses show as "Held" on Today and aren't counted as missed.</p></div>
+    <div data-ck="swap"><label class="f">Which meals</label>${optsHtml('cslots', d.mealSlots.map(s => ({ v: s.id, l: s.label })), c.slotIds || [], true)}
+      <label class="f">Food instead</label>${optsHtml('cfoods', S.foods, c.foods || [], true)}
+      <p class="small muted">These foods are pre-selected when you log those meals during the change.</p></div>
+    <label class="f">Why / notes</label><textarea class="i" id="cNote" placeholder="e.g. holding supplements to see if appetite improves; reintroduce after">${esc(c.note)}</textarea>
+    <div class="actions">${id ? `<button class="btn danger" data-act="changeDel" data-id="${id}">Delete</button>${!c.untilDate ? `<button class="btn" data-act="changeEnd" data-id="${id}">End now</button>` : ''}` : ''}<button class="btn pri" data-act="changeSave" data-id="${id || ''}">Save</button></div>`);
+  ckFields();
+}
+function ckFields() { const k = optVal('ckind') || 'hold'; $$('[data-ck]').forEach(el => { el.style.display = el.dataset.ck === k ? '' : 'none'; }); }
+function openUsual(slotId) {
+  const d = dog(); const sl = d.mealSlots.find(s => s.id === slotId);
+  openSheet(`<h2>${esc(sl.label)}: usual food</h2><p class="small muted">Pre-selected when you log this meal, unless a routine change says otherwise.</p>
+    ${optsHtml('ufoods', S.foods, sl.usual || [], true)}
+    <div class="actions"><button class="btn" data-act="closeSheet">Cancel</button><button class="btn pri" data-act="usualSave" data-slot="${slotId}">Save</button></div>`);
+}
+function routineMedsHtml(d) {
+  const slots = d.mealSlots || [];
+  let h = `<div class="card"><h2>Usual meals</h2><p class="small muted" style="margin:4px 0 4px">The normal food for each meal. Tap to set.</p>` +
+    (slots.length ? slots.map(s => `<button class="mrow" data-act="usualOpen" data-slot="${s.id}"><span><b>${esc(s.label)}</b>${s.time ? ' <span class="muted small">' + esc(s.time) + '</span>' : ''}<br><span class="small muted">${esc((s.usual || []).join(', ') || 'Not set')}</span></span><span class="muted">›</span></button>`).join('') : '<p class="empty">No meal slots. Add them in Dogs, Edit.</p>') + `</div>`;
+  const all = S.changes.filter(c => c.dogId === d.id).sort((a, b) => chFrom(b) - chFrom(a));
+  const now = Date.now();
+  const cur = all.filter(c => chFrom(c) <= now && chUntil(c) >= now), next = all.filter(c => chFrom(c) > now), past = all.filter(c => chUntil(c) < now);
+  h += `<div class="card"><div class="row between"><h2>Routine changes</h2><button class="btn sm" data-act="changeOpen" data-id="">Add</button></div>` +
+    (cur.length ? `<h3 style="margin-top:8px">In effect now</h3>` + cur.map(changeRow).join('') : '<p class="empty" style="padding-bottom:0">No changes in effect. The routine below is what applies.</p>') +
+    (next.length ? `<h3 style="margin-top:10px">Planned</h3>` + next.map(changeRow).join('') : '') +
+    (past.length ? `<details style="margin-top:6px"><summary>Past changes (${past.length})</summary>${past.map(changeRow).join('')}</details>` : '') + `</div>`;
+  return h;
+}
+const ROUTINE_ACTIONS = {
+  changeOpen: el => openChange(el.dataset.id || null),
+  holdPick: el => {
+    const v = el.dataset.v;
+    $$('.opts[data-group="cmeds"] .opt').forEach(b => { const m = S.meds.find(x => x.id === b.dataset.v); if (v === 'none') b.classList.remove('on'); else if (m && ((v === 'supp') === (m.cat !== 'med'))) b.classList.add('on'); });
+  },
+  changeSave: el => {
+    const kind = optVal('ckind') || 'hold'; const fromDate = $('#cFD').value; if (!fromDate) return toast('Choose a start date');
+    const data = { kind, fromDate, fromTime: $('#cFT').value, untilDate: $('#cUD').value, untilTime: $('#cUT').value, note: $('#cNote').value.trim(),
+      medIds: kind === 'hold' ? $$('.opts[data-group="cmeds"] .opt.on').map(b => b.dataset.v) : [],
+      slotIds: kind === 'swap' ? $$('.opts[data-group="cslots"] .opt.on').map(b => b.dataset.v) : [],
+      foods: kind === 'swap' ? $$('.opts[data-group="cfoods"] .opt.on').map(b => b.dataset.v) : [] };
+    if (kind === 'hold' && !data.medIds.length) return toast('Pick at least one dose to hold');
+    if (kind === 'swap' && (!data.slotIds.length || !data.foods.length)) return toast('Pick the meals and the food');
+    if (kind === 'other' && !data.note) return toast('Describe the change in the notes');
+    if (data.untilDate && stamp(data.untilDate, data.untilTime || '23:59') < stamp(fromDate, data.fromTime || '00:00')) return toast('End is before the start');
+    if (el.dataset.id) Object.assign(S.changes.find(c => c.id === el.dataset.id), data); else S.changes.push(Object.assign({ id: uid(), dogId: UI.dog }, data));
+    save(); closeSheet(); render(); toast('Routine change saved');
+  },
+  changeEnd: el => { const c = S.changes.find(x => x.id === el.dataset.id); c.untilDate = UI.today; c.untilTime = nowHM(); save(); closeSheet(); render(); toast('Change ended'); },
+  changeDel: el => { if (!confirm('Delete this routine change?')) return; S.changes = S.changes.filter(c => c.id !== el.dataset.id); save(); closeSheet(); render(); },
+  usualOpen: el => openUsual(el.dataset.slot),
+  usualSave: el => { const d = dog(); const sl = d.mealSlots.find(s => s.id === el.dataset.slot); sl.usual = $$('.opts[data-group="ufoods"] .opt.on').map(b => b.dataset.v); save(); closeSheet(); render(); toast('Usual food saved'); }
+};
+
+/* ---------- header + tabs ---------- */
+const ICONS = {
+  today: '<svg viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16" rx="3"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/><path d="M8.5 15l2.3 2.2 4.7-4.7"/></svg>',
+  log: '<svg viewBox="0 0 24 24"><path d="M5 4h14v17H5z"/><path d="M8.5 9h7M8.5 13h7M8.5 17h4"/></svg>',
+  meds: '<svg viewBox="0 0 24 24"><rect x="2.8" y="8.5" width="18.4" height="7" rx="3.5" transform="rotate(-35 12 12)"/><path d="M9.2 7.6l5.6 8.8" /></svg>',
+  bloods: '<svg viewBox="0 0 24 24"><path d="M12 3.2c3.6 4.6 6 8 6 10.9a6 6 0 0 1-12 0c0-2.9 2.4-6.3 6-10.9z"/><path d="M9.3 14.5a2.9 2.9 0 0 0 2.7 2.7"/></svg>',
+  dogs: '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="16" rx="4.2" ry="3.6"/><circle cx="6" cy="10.5" r="1.9"/><circle cx="18" cy="10.5" r="1.9"/><circle cx="9.3" cy="6.2" r="1.9"/><circle cx="14.7" cy="6.2" r="1.9"/></svg>'
+};
+const TABS = [['today', 'Today'], ['log', 'Log'], ['meds', 'Meds'], ['bloods', 'Bloods'], ['dogs', 'Dogs']];
+function applyTheme() {
+  if (!hasDogs()) return;
+  const d = dog(); const r = document.documentElement.style;
+  r.setProperty('--dog', d.color); r.setProperty('--dog-tint', hexTint(d.color, .13));
+}
+function avatar(d) {
+  const style = d.photo ? `style="background-image:url(${d.photo})"` : `style="background-color:${d.color}"`;
+  return `<span class="av" ${style}>${d.photo ? '' : esc(d.name[0])}</span>`;
+}
+function renderHeader() {
+  const d = dog();
+  let sub = d.status === 'coming' ? 'Arriving ' + fmtDate(d.due) : ageText(d.dob);
+  document.getElementById('hdr').innerHTML = `<div class="dogs">` +
+    S.dogs.map(x => `<button class="dogbtn${x.id === UI.dog ? ' on' : ''}" style="--c:${x.color}" data-act="dog" data-id="${x.id}" aria-label="${esc(x.name)}">${avatar(x)}<span>${esc(x.name)}</span></button>`).join('') +
+    `<div class="headtitle"><b>${esc(d.name)}</b><span class="small muted">${esc(sub)}</span></div></div>`;
+  document.getElementById('tabs').innerHTML = TABS.map(([id, l]) => `<button class="${UI.tab === id ? 'on' : ''}" data-act="tab" data-id="${id}">${ICONS[id]}${l}</button>`).join('');
+}
+function viewWelcome() {
+  return `<div class="card accent" style="margin-top:20px"><h2>Welcome to Loves of My Life</h2>
+    <p>This app keeps everything on your phone. To get started, load your starter file (or any backup you've exported before).</p>
+    <p class="small muted">Save the file to the Files app first, then tap the button and choose it.</p>
+    <div class="actions"><button class="btn pri" data-act="import">Load starter file</button></div></div>`;
+}
+function render() {
+  if (!hasDogs()) {
+    document.getElementById('hdr').innerHTML = `<div class="headtitle" style="text-align:left"><b>Loves of My Life</b></div>`;
+    document.getElementById('tabs').innerHTML = '';
+    document.getElementById('view').innerHTML = viewWelcome();
+    return;
+  }
+  if (!S.dogs.find(d => d.id === UI.dog)) UI.dog = S.dogs[0].id;
+  applyTheme(); renderHeader();
+  const v = document.getElementById('view');
+  v.innerHTML = ({ today: viewToday, log: viewLog, meds: viewMeds, bloods: viewBloods, dogs: viewDogs })[UI.tab]();
+}
+
+/* ---------- TODAY ---------- */
+function viewToday() {
+  const d = dog(); const date = UI.date; const isToday = date === UI.today;
+  let h = `<div class="datebar"><button class="iconbtn" data-act="day" data-n="-1" aria-label="Previous day">‹</button>
+    <div style="text-align:center"><div class="d">${isToday ? 'Today' : esc(fmtDate(date))}</div><div class="small muted">${isToday ? esc(fmtDate(date, true)) : '<button class="linkbtn" data-act="day" data-n="0">Back to today</button>'}</div></div>
+    <button class="iconbtn" data-act="day" data-n="1" aria-label="Next day" ${isToday ? 'disabled style="opacity:.35"' : ''}>›</button></div>`;
+  // backup reminder
+  const lb = S.lastBackup; const age = lb ? diffDays(lb.slice(0, 10), UI.today) : null;
+  if (isToday && (lb == null || age >= 7)) {
+    h += `<div class="banner"><span class="small"><b>Backup</b><br>${lb ? 'Last backup ' + age + ' days ago' : 'No backup yet'}</span><button class="btn sm pri" data-act="export">Back up now</button></div>`;
+  }
+  if (d.status === 'coming') {
+    return h + `<div class="card accent"><h2>${esc(d.name)} arrives ${esc(fmtDate(d.due))}</h2><p class="muted">Her profile is ready in the Dogs tab. Add a photo and details whenever you like.</p></div>`;
+  }
+  h += todayTopHtml(d, date);
+  // injections
+  const injs = S.injections.filter(i => i.dogId === d.id);
+  if (injs.length) {
+    h += `<div class="card"><div class="row between"><h2>Injections</h2></div><div style="margin-top:10px">` + injs.map(i => {
+      const x = injDue(i);
+      if (!x.last) return `<div class="counter"><div class="big">?</div><div><b>${esc(i.name)}</b><div class="small muted">No date recorded</div></div></div>`;
+      const dueTxt = x.until > 0 ? `Due ${fmtDate(x.due)}, in ${x.until} day${x.until === 1 ? '' : 's'}` : x.until === 0 ? `Due today` : `Overdue by ${-x.until} day${x.until === -1 ? '' : 's'} (due ${fmtDate(x.due)})`;
+      return `<div class="counter"><div class="big">${x.since}<small>days since</small></div><div style="flex:1"><b>${esc(i.name)}</b><div class="small muted">Last given ${esc(fmtDate(x.last))}</div><div class="small" style="color:${x.until < 0 ? 'var(--bad)' : x.until <= 3 ? 'var(--warn)' : 'inherit'}">${dueTxt}</div></div><button class="btn sm" data-act="injLog" data-id="${i.id}">Log</button></div>`;
+    }).join('') + `</div></div>`;
+  }
+  // periodic meds (monthly / quarterly) due within last 7 days and not logged
+  const periodic = dogMeds(d.id).filter(m => !m.paused && ['monthly', 'quarterly'].includes((m.schedule || {}).type));
+  if (periodic.length) {
+    const rows = periodic.map(m => {
+      const last = lastDueOnOrBefore(m, date);
+      const given = last ? lastGivenOnOrAfter(m.id, last) : null;
+      const next = nextDueAfter(m, date);
+      if (last && diffDays(last, date) <= 7 && !given) {
+        return `<div class="dose"><button class="tick" data-act="tickP" data-id="${m.id}" data-due="${last}" aria-label="Mark given"></button><button class="lbl" data-act="medEdit" data-id="${m.id}"><b>${esc(m.name)}</b><small style="color:${last === date ? 'inherit' : 'var(--bad)'}">${last === date ? 'Due today' : 'Due ' + esc(fmtDate(last)) + ', not logged'}</small></button></div>`;
+      }
+      const lastLog = S.doses.filter(x => x.medId === m.id && x.status !== 'missed' && x.status !== 'vomited').map(x => x.date).sort().slice(-1)[0];
+      return `<div class="dose"><span class="tick ${given ? 'given' : 'idle'}">${given ? '✓' : ''}</span><div class="lbl"><b>${esc(m.name)}</b><small>${lastLog ? 'Last logged ' + esc(fmtDate(lastLog)) + '. ' : ''}Next due ${esc(fmtDate(next))}</small></div></div>`;
+    }).join('');
+    h += `<div class="card"><h2>Parasite and monthly treatments</h2>${rows}</div>`;
+  }
+  // scheduled doses
+  const due = dogMeds(d.id).filter(m => !['monthly', 'quarterly', 'prn'].includes((m.schedule || {}).type) && isDueOn(m, date));
+  const groups = {};
+  due.forEach(m => m.slots.forEach((sl, idx) => { const t = sl.t || 'Anytime'; (groups[t] = groups[t] || []).push({ m, sl, idx }); }));
+  const times = Object.keys(groups).sort();
+  if (times.length) {
+    h += `<div class="card"><div class="row between"><h2>Doses</h2><button class="btn sm" data-act="extraDose">Extra dose</button></div>` + times.map(t => {
+      const items = groups[t];
+      const allDone = items.every(it => doseEntry(it.m.id, date, it.idx) || isHeld(it.m, date, it.sl));
+      return `<div class="slot"><div class="slothead"><span class="t">${esc(t)}</span>${allDone ? '<span class="chip given">All logged</span>' : `<button class="linkbtn small" data-act="tickAll" data-t="${esc(t)}">Mark all given</button>`}</div>` +
+        items.map(({ m, sl, idx }) => {
+          if (isHeld(m, date, sl) && !doseEntry(m.id, date, idx)) return `<div class="dose" style="opacity:.55"><span class="tick" style="border-style:dashed"></span><button class="lbl" data-act="doseOpts" data-id="${m.id}" data-slot="${idx}"><b>${esc(m.name)}</b><small>${esc([sl.dose, sl.label].filter(Boolean).join(', '))} <span class="chip">Held</span></small></button></div>`;
+          const e = doseEntry(m.id, date, idx); const st = e ? e.status : '';
+          const sym = st === 'given' ? '✓' : st === 'late' ? '✓' : st === 'missed' ? '✕' : st === 'vomited' ? '!' : '';
+          const extra = [sl.dose, sl.label].filter(Boolean).join(', ');
+          return `<div class="dose"><button class="tick ${st}" data-act="tick" data-id="${m.id}" data-slot="${idx}" aria-label="Mark ${esc(m.name)} given">${sym}</button>
+            <button class="lbl" data-act="doseOpts" data-id="${m.id}" data-slot="${idx}"><b>${esc(m.name)}</b><small>${esc(extra) || '&nbsp;'}${e ? ` <span class="chip ${st}">${st === 'given' ? 'Given ' + esc(e.time) : st === 'late' ? 'Late ' + esc(e.time) : st === 'missed' ? 'Missed' : 'Vomited ' + esc(e.time)}</span>` : ''}</small></button></div>`;
+        }).join('') + `</div>`;
+    }).join('') + `</div>`;
+  } else {
+    h += `<div class="card"><div class="row between"><h2>Doses</h2><button class="btn sm" data-act="extraDose">Extra dose</button></div><p class="empty">No daily doses set up for ${esc(d.name)}. Add them in Meds.</p></div>`;
+  }
+  // as needed
+  const prn = dogMeds(d.id).filter(m => (m.schedule || {}).type === 'prn' && !m.paused);
+  if (prn.length) {
+    h += `<div class="card"><h2>As needed</h2><div class="stack" style="margin-top:8px">` + prn.map(m => {
+      const today = S.doses.filter(x => x.medId === m.id && x.date === date && x.status === 'prn').map(x => x.time).sort();
+      return `<div class="row between"><div><b>${esc(m.name)}</b><div class="small muted">${today.length ? 'Given ' + today.join(', ') : 'Not given yet'}</div></div><button class="btn sm pri" data-act="prn" data-id="${m.id}">Log</button></div>`;
+    }).join('') + `</div></div>`;
+  }
+  // extra doses today
+  const extras = S.doses.filter(x => x.dogId === d.id && x.date === date && x.status === 'extra');
+  if (extras.length) {
+    h += `<div class="card"><h2>Extra doses</h2>` + extras.map(x => entryHtml(x.time, `<b>${esc(medName(x.medId))}</b> ${esc(x.dose || '')}<div class="small muted">${esc([x.reason, x.note].filter(Boolean).join('. '))}</div>`, 'dose', x.id)).join('') + `</div>`;
+  }
+  // meals
+  const slots = d.mealSlots || [];
+  const mealsToday = S.meals.filter(m => m.dogId === d.id && m.date === date);
+  h += `<div class="card"><div class="row between"><h2>Meals</h2><button class="btn sm" data-act="mealOpen" data-slot="">Add meal</button></div>`;
+  if (slots.length) {
+    h += slots.map(sl => {
+      const m = mealsToday.find(x => x.slot === sl.id);
+      return `<button class="meal" data-act="mealOpen" data-slot="${sl.id}"${m ? ` data-id="${m.id}"` : ''}><span><b>${esc(sl.label)}</b>${sl.optional ? ' <span class="small muted">optional</span>' : ''}<br><span class="small muted">${m ? esc(mealFoodsText(m)) : esc(sl.time || '')}</span></span>${m ? outcomeChip(m.outcome) + (m.time ? ` <span class="small muted">${esc(m.time)}</span>` : '') : '<span class="small muted">Not logged</span>'}</button>`;
+    }).join('');
+  }
+  const adhoc = mealsToday.filter(m => !slots.find(s => s.id === m.slot));
+  h += adhoc.map(m => `<button class="meal" data-act="mealOpen" data-slot="" data-id="${m.id}"><span><b>${esc(m.time || 'Meal')}</b><br><span class="small muted">${esc(mealFoodsText(m))}</span></span>${outcomeChip(m.outcome)}</button>`).join('');
+  if (!slots.length && !adhoc.length) h += `<p class="empty">No meals logged.</p>`;
+  h += `</div>`;
+  // symptoms
+  const syms = S.symptoms.filter(s => s.dogId === d.id && s.date === date).sort((a, b) => a.time < b.time ? -1 : 1);
+  h += `<div class="card"><h2>Log a symptom</h2><div class="taps" style="margin-top:10px">` +
+    d.symptoms.map(s => `<button class="tap" data-act="symOpen" data-type="${s.id}">${esc(s.label)}</button>`).join('') + `</div>`;
+  if (syms.length) h += `<div style="margin-top:12px">` + syms.map(s => entryHtml(s.time, symSummary(s), 'sym', s.id)).join('') + `</div>`;
+  h += `</div>`;
+  return h;
+}
+function outcomeChip(o) {
+  if (o === 'all') return '<span class="chip given">Ate all</span>';
+  if (o === 'partial') return '<span class="chip late">Ate some</span>';
+  if (o === 'refused') return '<span class="chip missed">Refused</span>';
+  return '<span class="chip">Offered</span>';
+}
+function medName(id) { const m = S.meds.find(x => x.id === id); return m ? m.name : 'Removed medication'; }
+function symLabel(dogId, type) { const d = S.dogs.find(x => x.id === dogId); const s = d && d.symptoms.find(x => x.id === type); return s ? s.label : type; }
+function symSummary(s) {
+  const bits = [];
+  if (s.sleepId) { const z = S.sleeps.find(x => x.id === s.sleepId); if (z) bits.push('after ' + durText(sleepMins(z)) + ' asleep'); }
+  if (s.signs && s.signs.length) bits.push(s.signs.join(', '));
+  if (s.side) bits.push(s.side); if (s.kind) bits.push(s.kind); if (s.severity) bits.push(s.severity);
+  if (s.resolved) bits.push('resolved ' + s.resolved + (minsBetween(s.time, s.resolved) != null ? ' (' + durText(minsBetween(s.time, s.resolved)) + ')' : ''));
+  else if (s.settle) bits.push('settled in ' + s.settle + ' min');
+  if (s.mealId) { const m = S.meals.find(x => x.id === s.mealId); if (m) bits.push('after ' + mealLabel(m)); }
+  return `<b>${esc(s.type === 'other' && s.custom ? s.custom : symLabel(s.dogId, s.type))}</b>${bits.length ? ' <span class="muted">' + esc(bits.join(', ')) + '</span>' : ''}${(s.actions && s.actions.length) || s.actionNote ? `<div class="small">What we did: ${esc([(s.actions || []).join(', '), s.actionNote].filter(Boolean).join('. '))}</div>` : ''}${s.note ? `<div class="small muted pre">${esc(s.note)}</div>` : ''}`;
+}
+function mealLabel(m) {
+  const d = S.dogs.find(x => x.id === m.dogId); const sl = d && d.mealSlots.find(x => x.id === m.slot);
+  return (sl ? sl.label.toLowerCase() : 'meal') + (m.foods && m.foods.length ? ' (' + m.foods.join(', ') + ')' : '');
+}
+function entryHtml(time, body, kind, id) {
+  return `<div class="entry"><span class="tm">${esc(time || '')}</span><div class="body">${body}</div><button class="x" data-act="entryOpen" data-kind="${kind}" data-id="${id}" aria-label="Edit">⋯</button></div>`;
+}
+
+/* ---------- LOG ---------- */
+function viewLogEntries() {
+  const d = dog(); const from = addDays(UI.today, -UI.logDays + 1);
+  const items = [];
+  S.symptoms.filter(s => s.dogId === d.id && s.date >= from).forEach(s => items.push({ date: s.date, time: s.time, html: symSummary(s), kind: 'sym', id: s.id }));
+  S.meals.filter(m => m.dogId === d.id && m.date >= from).forEach(m => items.push({ date: m.date, time: m.time, html: mealSummaryHtml(m), kind: 'meal', id: m.id }));
+  S.doses.filter(x => x.dogId === d.id && x.date >= from && (x.status !== 'given' || isPeriodic(x.medId))).forEach(x => {
+    const lbl = { given: 'Given', late: 'Given late', missed: 'Missed', vomited: 'Vomited', extra: 'Extra dose', prn: 'Given' }[x.status] || x.status;
+    items.push({ date: x.date, time: x.time, html: `<b>${esc(medName(x.medId))}</b> <span class="chip ${x.status === 'extra' || x.status === 'prn' || x.status === 'given' ? 'dog' : x.status}">${lbl}</span>${x.reason || x.note ? `<div class="small muted">${esc([x.reason, x.note].filter(Boolean).join('. '))}</div>` : ''}`, kind: 'dose', id: x.id });
+  });
+  S.injections.filter(i => i.dogId === d.id).forEach(i => i.doses.filter(x => x.date >= from).forEach(x => items.push({ date: x.date, time: '', html: `<b>${esc(i.name)}</b> <span class="chip dog">Injection</span>${x.note ? `<div class="small muted">${esc(x.note)}</div>` : ''}`, kind: 'none', id: '' })));
+  Object.keys(S.dayNotes).filter(k => k.startsWith(d.id + '|')).forEach(k => { const dt = k.split('|')[1]; if (dt >= from && S.dayNotes[k]) items.push({ date: dt, time: '', html: `<b>Note</b><div class="small pre">${esc(S.dayNotes[k])}</div>`, kind: 'none', id: '' }); });
+  S.appts.filter(a => a.dogId === d.id && a.date >= from && a.date <= UI.today).forEach(a => items.push({ date: a.date, time: a.time, html: `<b>${esc(a.type)}</b> <span class="chip dog">Appointment</span>${a.note ? `<div class="small muted pre">${esc(a.note)}</div>` : ''}`, kind: 'none', id: '' }));
+  // 14-day symptom tally
+  const f14 = addDays(UI.today, -13); const tally = {};
+  S.symptoms.filter(s => s.dogId === d.id && s.date >= f14).forEach(s => { const l = s.type === 'other' && s.custom ? s.custom : symLabel(d.id, s.type); tally[l] = (tally[l] || 0) + 1; });
+  const refused = S.meals.filter(m => m.dogId === d.id && m.date >= f14 && m.outcome !== 'all' && m.outcome);
+  let h = `<div class="card"><h2>Last 14 days</h2>`;
+  const tk = Object.keys(tally);
+  if (tk.length || refused.length) {
+    h += `<div class="opts" style="margin-top:10px">` + tk.sort((a, b) => tally[b] - tally[a]).map(k => `<span class="chip dog" style="font-size:.85rem;padding:5px 10px">${esc(k)} ${tally[k]}</span>`).join('') +
+      (refused.length ? `<span class="chip late" style="font-size:.85rem;padding:5px 10px">Meals not finished ${refused.length}</span>` : '') + `</div>`;
+  } else h += `<p class="empty">Nothing logged in the last 14 days.</p>`;
+  h += `</div>`;
+  if (!items.length) return h + `<div class="card"><p class="empty">No entries in the last ${UI.logDays} days. Symptoms, meals and dose problems you log on Today appear here.</p></div>`;
+  const byDate = {};
+  items.forEach(it => (byDate[it.date] = byDate[it.date] || []).push(it));
+  Object.keys(byDate).sort().reverse().forEach(k => {
+    h += `<div class="card"><h3>${esc(fmtDate(k))}</h3>` + byDate[k].sort((a, b) => (a.time || '') < (b.time || '') ? -1 : 1).map(it => it.kind === 'none' ? `<div class="entry"><span class="tm"></span><div class="body">${it.html}</div></div>` : entryHtml(it.time, it.html, it.kind, it.id)).join('') + `</div>`;
+  });
+  h += `<button class="btn" style="width:100%" data-act="logMore">Show older entries</button>`;
+  return h;
+}
+const cap = s => s ? s[0].toUpperCase() + s.slice(1) : s;
+
+function isPeriodic(id){ const m = S.meds.find(x => x.id === id); return !!m && ['monthly','quarterly'].includes((m.schedule||{}).type); }
+
+/* ---------- MEDS ---------- */
+function medRow(m) {
+  const slots = (m.slots || []).filter(s => s.t || s.dose).map(s => [s.t, s.dose, s.label].filter(Boolean).join(' ')).join('; ');
+  return `<button class="mrow" data-act="medEdit" data-id="${m.id}"><span><b>${esc(m.name)}</b><br><span class="small muted">${esc(schedText(m))}${slots ? ': ' + esc(slots) : ''}</span></span><span class="muted">›</span></button>`;
+}
+function viewMeds() {
+  const d = dog(); const ms = dogMeds(d.id);
+  let h = '';
+  if (d.avoid || d.cautions) {
+    h += `<div class="card accent">${d.avoid ? `<h2>Do not give</h2><p class="pre" style="margin:6px 0 0">${esc(d.avoid)}</p>` : ''}${d.cautions ? `<h3 style="margin-top:12px">Cautions</h3><p class="pre small" style="margin:6px 0 0">${esc(d.cautions)}</p>` : ''}<p class="small muted" style="margin:10px 0 0">These only cover what you have entered here. The app does not check drug interactions itself. Edit in Dogs.</p></div>`;
+  }
+  const injs = S.injections.filter(i => i.dogId === d.id);
+  h += routineMedsHtml(d);
+  h += `<div class="card"><div class="row between"><h2>Injections</h2><button class="btn sm" data-act="injEdit" data-id="">Add</button></div>` +
+    (injs.length ? injs.map(i => { const x = injDue(i); return `<button class="mrow" data-act="injEdit" data-id="${i.id}"><span><b>${esc(i.name)}</b><br><span class="small muted">Every ${i.every} ${esc(i.unit)}${x.last ? '. Last ' + esc(fmtDate(x.last)) + ', due ' + esc(fmtDate(x.due)) : ''}</span></span><span class="muted">›</span></button>`; }).join('') : '<p class="empty">None</p>') + `</div>`;
+  const sect = (title, list) => `<div class="card"><h2>${title}</h2>${list.length ? list.map(medRow).join('') : '<p class="empty">None</p>'}</div>`;
+  const active = ms.filter(m => !m.paused);
+  h += sect('Medications', active.filter(m => m.cat === 'med'));
+  h += sect('Supplements', active.filter(m => m.cat !== 'med'));
+  const paused = ms.filter(m => m.paused);
+  if (paused.length) h += sect('Paused', paused);
+  h += `<button class="btn pri" style="width:100%" data-act="medEdit" data-id="">Add medication or supplement</button>`;
+  return h;
+}
+
+/* ---------- BLOODS ---------- */
+const PINNED = ['na_k', 'na', 'k', 'creatinine', 'urea', 'idexx_sdma_a', 'lipa', 'alt', 'alp', 'glucose'];
+function mk(key) { return S.markers.find(m => m.key === key); }
+function markerName(m) { return m.key === 'idexx_sdma_a' ? 'SDMA (IDEXX)' : m.name; }
+function seriesFor(dogId, key) {
+  return (S.bloods[dogId] || []).filter(r => r.values[key]).map(r => ({ date: r.date, prec: r.precision, ...r.values[key] })).sort((a, b) => a.date < b.date ? -1 : 1);
+}
+function flag(m, p) {
+  if (p.v == null) return '';
+  const lo = p.low != null ? p.low : m.low, hi = p.high != null ? p.high : m.high;
+  if (hi != null && p.v > hi) return 'H';
+  if (lo != null && p.v < lo) return 'L';
+  return '';
+}
+const toT = k => { const p = k.split('-').map(Number); return new Date(p[0], p[1] - 1, p[2] || 15).getTime(); };
+function spark(m, pts) {
+  const num = pts.filter(p => p.v != null).slice(-12);
+  if (num.length < 2) return '';
+  const vs = num.map(p => p.v); const mn = Math.min(...vs), mx = Math.max(...vs); const span = mx - mn || 1;
+  const W = 140, H = 34;
+  const xy = num.map((p, i) => [4 + i * (W - 8) / (num.length - 1), H - 4 - (p.v - mn) / span * (H - 8)]);
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><polyline points="${xy.map(a => a.join(',')).join(' ')}" fill="none" stroke="var(--dog)" stroke-width="2" vector-effect="non-scaling-stroke"/>${xy.map((a, i) => flag(m, num[i]) ? `<circle cx="${a[0]}" cy="${a[1]}" r="2.6" fill="var(--bad)"/>` : '').join('')}</svg>`;
+}
+function fmtV(p) { return p.v != null ? (Math.round(p.v * 1000) / 1000).toString() : (p.t || ''); }
+function viewBloods() {
+  const d = dog(); const res = S.bloods[d.id] || [];
+  let h = `<div class="row wrap" style="gap:8px;margin-bottom:12px"><button class="btn pri" data-act="bloodAdd">Add results</button><button class="btn" data-act="bloodDates">Results by date</button></div>`;
+  if (!res.length) return h + `<div class="card"><p class="empty">No blood results for ${esc(d.name)} yet. Tap Add results after a vet visit.</p></div>`;
+  const last = res.map(r => r.date).sort().slice(-1)[0];
+  h += `<p class="small muted" style="margin:0 0 10px">${res.length} test dates, most recent ${esc(fmtDate(last, true))}. Tap any marker for its full history.</p>`;
+  h += `<div class="mgrid">` + PINNED.map(k => {
+    const m = mk(k); if (!m) return ''; const pts = seriesFor(d.id, k); if (!pts.length) return '';
+    const p = pts[pts.length - 1]; const f = flag(m, p);
+    return `<button class="mcard" data-act="marker" data-k="${k}"><div class="small muted">${esc(markerName(m))}</div><div class="v">${esc(fmtV(p))} ${f ? `<span class="chip ${f}">${f}</span>` : ''}</div><div class="small muted">${esc(fmtShort(p.date))}</div>${spark(m, pts)}</button>`;
+  }).join('') + `</div>`;
+  const groups = ['Electrolytes', 'Biochemistry', 'Haematology', 'Urinalysis'];
+  h += `<div class="card" style="margin-top:12px">` + groups.map(g => {
+    const ms = S.markers.filter(m => m.group === g).filter(m => seriesFor(d.id, m.key).length);
+    if (!ms.length) return '';
+    const flagged = ms.filter(m => { const s = seriesFor(d.id, m.key); return flag(m, s[s.length - 1]); }).length;
+    return `<details><summary><span>${g} <span class="small muted">${ms.length} markers${flagged ? ', ' + flagged + ' flagged on latest' : ''}</span></span></summary>` + ms.map(m => {
+      const s = seriesFor(d.id, m.key); const p = s[s.length - 1]; const f = flag(m, p);
+      return `<button class="mrow" data-act="marker" data-k="${m.key}"><span>${esc(markerName(m))}</span><span>${esc(fmtV(p))} ${f ? `<span class="chip ${f}">${f}</span>` : ''} <span class="small muted">${esc(fmtShort(p.date))}</span></span></button>`;
+    }).join('') + `</details>`;
+  }).join('') + `</div>`;
+  return h;
+}
+function markerChart(m, pts) {
+  const num = pts.filter(p => p.v != null);
+  if (num.length < 2) return '<p class="empty">Not enough numeric results to chart.</p>';
+  const W = 340, H = 200, L = 40, R = 10, T = 12, B = 26;
+  const vs = num.map(p => p.v);
+  let mn = Math.min(...vs), mx = Math.max(...vs);
+  if (m.low != null) mn = Math.min(mn, m.low); if (m.high != null) mx = Math.max(mx, m.high);
+  const padv = (mx - mn) * .08 || 1; mn -= padv; mx += padv;
+  const t0 = toT(num[0].date), t1 = toT(num[num.length - 1].date); const ts = t1 - t0 || 1;
+  const X = t => L + (t - t0) / ts * (W - L - R), Y = v => T + (mx - v) / (mx - mn) * (H - T - B);
+  let s = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block" role="img" aria-label="${esc(markerName(m))} chart">`;
+  if (m.low != null && m.high != null) s += `<rect x="${L}" y="${Y(m.high)}" width="${W - L - R}" height="${Y(m.low) - Y(m.high)}" fill="var(--dog-tint)"/>`;
+  [mn + padv, mx - padv].forEach(v => { s += `<text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end" font-size="10" fill="var(--muted)">${Math.round(v * 100) / 100}</text>`; });
+  const y0 = new Date(t0).getFullYear(), y1 = new Date(t1).getFullYear();
+  const step = Math.max(1, Math.ceil((y1 - y0) / 5));
+  s += `<text x="${L}" y="${H - 8}" font-size="10" fill="var(--muted)">${esc(fmtShort(num[0].date))}</text>`;
+  for (let y = y0 + 1; y <= y1; y += step) { const t = new Date(y, 0, 1).getTime(); if (t >= t0) { s += `<line x1="${X(t)}" x2="${X(t)}" y1="${T}" y2="${H - B}" stroke="var(--line)"/><text x="${X(t)}" y="${H - 8}" text-anchor="middle" font-size="10" fill="var(--muted)">${y}</text>`; } }
+  if (y0 === y1) s += `<text x="${W - R}" y="${H - 8}" text-anchor="end" font-size="10" fill="var(--muted)">${esc(fmtShort(num[num.length - 1].date))}</text>`;
+  s += `<polyline points="${num.map(p => X(toT(p.date)) + ',' + Y(p.v)).join(' ')}" fill="none" stroke="var(--dog)" stroke-width="2"/>`;
+  s += num.map(p => `<circle cx="${X(toT(p.date))}" cy="${Y(p.v)}" r="3.4" fill="${flag(m, p) ? 'var(--bad)' : 'var(--dog)'}"/>`).join('');
+  return s + `</svg>`;
+}
+function openMarker(k) {
+  const d = dog(); const m = mk(k); let pts = seriesFor(d.id, k);
+  const cut = UI.bloodRange === '6m' ? addMonths(UI.today, -6) : UI.bloodRange === '2y' ? addMonths(UI.today, -24) : null;
+  if (cut) pts = pts.filter(p => p.date.length === 7 ? p.date + '-15' >= cut : p.date >= cut);
+  const rng = m.low != null ? `${m.low} to ${m.high}${m.unit ? ' ' + m.unit : ''}` : 'No range recorded';
+  let h = `<h2>${esc(markerName(m))}</h2><p class="small muted" style="margin:4px 0 10px">Reference range ${esc(rng)}</p>
+    <div class="seg" style="margin-bottom:10px">${[['all', 'All'], ['2y', '2 years'], ['6m', '6 months']].map(([v, l]) => `<button class="${UI.bloodRange === v ? 'on' : ''}" data-act="bloodRange" data-v="${v}" data-k="${k}">${l}</button>`).join('')}</div>
+    ${markerChart(m, pts)}`;
+  if (m.note) h += `<p class="small" style="background:var(--soft);border-radius:10px;padding:10px"><b>Your note:</b> ${esc(m.note)}</p>`;
+  const anyR = pts.some(p => p.low != null);
+  h += `<table class="tbl"><tr><th>Date</th><th>Result</th>${anyR ? '<th>Range used</th>' : ''}</tr>` + pts.slice().reverse().map(p => {
+    const f = flag(m, p); const lr = p.low != null ? `${p.low} to ${p.high}` : (m.low != null ? `${m.low} to ${m.high}` : '');
+    return `<tr><td>${esc(fmtDate(p.date, true))}</td><td><b>${esc(fmtV(p))}</b> ${f ? `<span class="chip ${f}">${f}</span>` : ''}</td>${anyR ? `<td class="small muted">${esc(lr)}</td>` : ''}</tr>`;
+  }).join('') + `</table><div class="actions"><button class="btn" data-act="closeSheet">Close</button></div>`;
+  openSheet(h);
+}
+function openBloodAdd(date) {
+  const d = dog(); const existing = (S.bloods[d.id] || []).find(r => r.date === date);
+  const groups = ['Electrolytes', 'Biochemistry', 'Haematology', 'Urinalysis'];
+  let h = `<h2>${existing ? 'Edit results' : 'Add results'}</h2><label class="f">Test date</label><input class="i" type="date" id="bDate" value="${esc(date && date.length === 10 ? date : UI.today)}" ${existing ? 'disabled' : ''}>
+    <p class="small muted">Fill in only the markers that were tested. Blank fields are ignored.</p>`;
+  h += groups.map((g, gi) => `<details ${gi === 0 ? 'open' : ''}><summary>${g}</summary>` + S.markers.filter(m => m.group === g).map(m => {
+    const v = existing && existing.values[m.key] ? fmtV(existing.values[m.key]) : '';
+    return `<div class="row" style="margin:6px 0"><label for="b_${m.key}" style="flex:1" class="small">${esc(markerName(m))}${m.unit ? ` <span class="muted">${esc(m.unit)}</span>` : ''}</label><input class="i" style="width:120px;flex:0 0 120px" id="b_${m.key}" data-k="${m.key}" inputmode="decimal" value="${esc(v)}"></div>`;
+  }).join('') + `</details>`).join('');
+  h += `<div class="actions"><button class="btn" data-act="closeSheet">Cancel</button><button class="btn pri" data-act="bloodSave" data-date="${existing ? esc(date) : ''}">Save results</button></div>`;
+  openSheet(h);
+}
+function openBloodDates() {
+  const d = dog(); const res = (S.bloods[d.id] || []).slice().sort((a, b) => a.date < b.date ? 1 : -1);
+  openSheet(`<h2>Results by date</h2>` + (res.length ? res.map(r => `<button class="mrow" data-act="bloodDate" data-date="${r.date}"><span>${esc(fmtDate(r.date, true))}</span><span class="small muted">${Object.keys(r.values).length} markers ›</span></button>`).join('') : '<p class="empty">None yet.</p>') + `<div class="actions"><button class="btn" data-act="closeSheet">Close</button></div>`);
+}
+function openBloodDate(date) {
+  const d = dog(); const r = (S.bloods[d.id] || []).find(x => x.date === date); if (!r) return;
+  let h = `<h2>${esc(fmtDate(date, true))}</h2><table class="tbl">` + S.markers.filter(m => r.values[m.key]).map(m => { const p = r.values[m.key]; const f = flag(m, p); return `<tr><td>${esc(markerName(m))}</td><td><b>${esc(fmtV(p))}</b> ${f ? `<span class="chip ${f}">${f}</span>` : ''}</td></tr>`; }).join('') + `</table>`;
+  h += `<div class="actions"><button class="btn danger" data-act="bloodDel" data-date="${date}">Delete this date</button>${date.length === 10 ? `<button class="btn" data-act="bloodEdit" data-date="${date}">Edit</button>` : ''}<button class="btn pri" data-act="closeSheet">Close</button></div>`;
+  openSheet(h);
+}
+
+/* ---------- DOGS ---------- */
+function viewDogs() {
+  let h = S.dogs.map(d => `<div class="card" style="border-left:5px solid ${d.color}">
+    <div class="row"><button class="dogbtn on" style="--c:${d.color}" data-act="photo" data-id="${d.id}" aria-label="Change photo">${avatar(d)}</button>
+    <div style="flex:1"><h2>${esc(d.name)}</h2><div class="small muted">${esc([d.breed, d.sex].filter(Boolean).join(', '))}</div>
+    <div class="small muted">${d.status === 'coming' ? 'Arriving ' + esc(fmtDate(d.due)) : d.dob ? 'Born ' + esc(fmtDate(d.dob)) + ' (' + esc(ageText(d.dob)) + ')' : ''}</div></div>
+    <button class="btn sm" data-act="dogEdit" data-id="${d.id}">Edit</button></div>
+    ${d.conditions ? `<h3 style="margin-top:12px">Conditions</h3><p class="pre small" style="margin:4px 0 0">${esc(d.conditions)}</p>` : ''}
+    ${d.history ? `<h3 style="margin-top:12px">History</h3><p class="pre small" style="margin:4px 0 0">${esc(d.history)}</p>` : ''}
+    ${S.focus.filter(x => x.dogId === d.id && x.done).length ? `<h3 style="margin-top:12px">Past focus</h3>` + S.focus.filter(x => x.dogId === d.id && x.done).map(x => `<div class="entry"><span class="tm" style="min-width:74px">${esc(fmtShort(x.start))}<br>to ${esc(fmtShort(x.done))}</span><div class="body small"><b class="pre">${esc(x.text)}</b>${x.outcome ? '<br>' + esc(x.outcome) : ''}</div></div>`).join('') : ''}
+    <p class="small muted" style="margin:10px 0 0">Tap the photo to change it.</p></div>`).join('');
+  const tt = (S.settings || {}).tickTime || 'scheduled';
+  h += `<div class="card"><h2>Ticking off doses</h2><p class="small muted" style="margin:4px 0 8px">When you tick a dose, record it at:</p>
+    <div class="seg"><button class="${tt === 'scheduled' ? 'on' : ''}" data-act="tickSetting" data-v="scheduled">Its scheduled time</button><button class="${tt === 'now' ? 'on' : ''}" data-act="tickSetting" data-v="now">The time I tick it</button></div>
+    <p class="small muted" style="margin:8px 0 0">Either way, tap a medication's name to set an exact time.</p></div>`;
+  h += `<div class="card"><h2>Foods</h2><p class="small muted" style="margin:4px 0 6px">The list you pick from when logging meals.</p>` +
+    (S.foods.length ? S.foods.map((f, i) => `<div class="entry"><div class="body">${esc(f)}</div><button class="x" data-act="foodRename" data-i="${i}" aria-label="Rename">✎</button><button class="x" data-act="foodDel" data-i="${i}" aria-label="Delete">✕</button></div>`).join('') : '<p class="empty">No foods yet.</p>') +
+    `<label class="f">Add foods (one per line, or paste a list)</label><textarea class="i" id="foodNew" placeholder="One food per line"></textarea><div class="actions"><button class="btn pri" data-act="foodAddList">Add to list</button></div></div>`;
+  h += `<div class="card"><h2>Backup</h2><p class="small muted">Everything lives on this phone only. ${S.lastBackup ? 'Last backup ' + esc(fmtDate(S.lastBackup.slice(0, 10), true)) + '.' : 'No backup yet.'} You'll get a reminder on Today after 7 days.</p>
+    <div class="actions"><button class="btn pri" data-act="export">Export backup</button><button class="btn" data-act="import">Restore from backup</button></div></div>
+    <p class="small muted" style="text-align:center">Loves of My Life, version ${APP_VERSION}</p>`;
+  return h;
+}
+
+/* ---------- sheets: doses ---------- */
+function setDose(medId, date, slot, status, time) {
+  const m = S.meds.find(x => x.id === medId);
+  S.doses = S.doses.filter(x => !(x.medId === medId && x.date === date && x.slot === slot && ['given', 'late', 'missed', 'vomited'].includes(x.status)));
+  if (status) S.doses.push({ id: uid(), dogId: m.dogId, medId, date, slot, status, time: time || nowHM(), dose: (m.slots[slot] || {}).dose || '' });
+  save();
+}
+function openDoseOpts(medId, slot) {
+  const m = S.meds.find(x => x.id === medId); const sl = m.slots[slot] || {}; const e = doseEntry(medId, UI.date, slot);
+  openSheet(`<h2>${esc(m.name)}</h2><p class="muted" style="margin:4px 0 0">${esc([sl.t, sl.dose, sl.label].filter(Boolean).join(', '))}</p>
+    <label class="f">What happened</label>${optsHtml('st', [{ v: 'given', l: 'Given' }, { v: 'late', l: 'Given late' }, { v: 'missed', l: 'Missed' }, { v: 'vomited', l: 'Vomited' }], e ? e.status : 'given')}
+    <label class="f">Time</label><input class="i" type="time" id="dTime" value="${esc(e ? e.time : tickTime(sl))}">
+    <label class="f">Note</label><input class="i" id="dNote" value="${esc(e && e.note || '')}" placeholder="Optional">
+    <div class="actions">${e ? `<button class="btn danger" data-act="doseClear" data-id="${medId}" data-slot="${slot}">Clear</button>` : ''}<button class="btn" data-act="closeSheet">Cancel</button><button class="btn pri" data-act="doseSave" data-id="${medId}" data-slot="${slot}">Save</button></div>`);
+}
+function openExtraDose(entry) {
+  const d = dog(); const ms = dogMeds(d.id);
+  const e = entry || {};
+  openSheet(`<h2>Extra dose</h2><p class="small muted">For anything given outside the usual schedule.</p>
+    <label class="f">Medication</label><select class="i" id="xMed">${ms.map(m => `<option value="${m.id}" ${e.medId === m.id ? 'selected' : ''}>${esc(m.name)}</option>`).join('')}</select>
+    <label class="f">Dose</label><input class="i" id="xDose" value="${esc(e.dose || '')}" placeholder="e.g. 6.25 mg">
+    <label class="f">Time</label><input class="i" type="time" id="xTime" value="${esc(e.time || nowHM())}">
+    <label class="f">Reason</label>${optsHtml('reason', ['Stress', 'Replacement after vomiting', 'Late catch-up', 'Vet instruction', 'Other'], e.reason || '')}
+    <label class="f">Note</label><input class="i" id="xNote" value="${esc(e.note || '')}" placeholder="Optional">
+    <div class="actions">${e.id ? `<button class="btn danger" data-act="entryDel" data-kind="dose" data-id="${e.id}">Delete</button>` : ''}<button class="btn" data-act="closeSheet">Cancel</button><button class="btn pri" data-act="extraSave" data-id="${e.id || ''}">Save</button></div>`);
+}
+
+/* ---------- sheets: meals ---------- */
+function openMeal(slotId, id) {
+  const d = dog(); const m = id ? S.meals.find(x => x.id === id) : null;
+  const sl = d.mealSlots.find(x => x.id === slotId);
+  const title = sl ? sl.label : 'Meal';
+  const defTime = m ? m.time : (UI.date === UI.today ? nowHM() : (sl && sl.time) || '');
+  openSheet(`<h2>${esc(title)}</h2>
+    <label class="f">What was offered</label>${optsHtml('foods', S.foods, m ? m.foods : plannedFoods(d, slotId, UI.date), true)}
+    <div class="row" style="margin-top:8px"><input class="i" id="mNewFood" placeholder="Add a new food"><button class="btn sm" data-act="foodAdd">Add</button></div>
+    <div id="mItems">${mealItemsHtml(m ? mealItems(m) : plannedFoods(d, slotId, UI.date).map(f => ({ food: f, amount: '', outcome: '' })))}</div>
+    <label class="f">Overall</label>${optsHtml('outcome', [{ v: 'all', l: 'Ate all' }, { v: 'partial', l: 'Ate some' }, { v: 'refused', l: 'Refused' }], m ? m.outcome : '')}
+    <label class="f">Sprinkles</label>${optsHtml('sprinkles', [{ v: 'yes', l: 'With sprinkles' }, { v: 'no', l: 'No sprinkles' }], m ? m.sprinkles : '')}
+    <label class="f">How she ate</label>${optsHtml('eat', EAT_OPTS, m ? m.eat : '')}
+    <label class="f">Dish</label>${optsHtml('dish', DISH_OPTS, m ? m.dish : '')}
+    <label class="f">Time</label><input class="i" type="time" id="mTime" value="${esc(defTime)}">
+    <label class="f">Note</label><textarea class="i" id="mNote" placeholder="Optional: how she ate, what helped">${esc(m ? m.note : '')}</textarea>
+    <div class="actions">${m ? `<button class="btn danger" data-act="entryDel" data-kind="meal" data-id="${m.id}">Delete</button>` : ''}<button class="btn" data-act="closeSheet">Cancel</button><button class="btn pri" data-act="mealSave" data-slot="${esc(slotId || '')}" data-id="${m ? m.id : ''}">Save meal</button></div>`);
+}
+
+/* ---------- sheets: symptoms ---------- */
+function openSym(type, id) {
+  const d = dog(); const s = id ? S.symptoms.find(x => x.id === id) : null;
+  const def = d.symptoms.find(x => x.id === (s ? s.type : type)) || { id: type, label: type };
+  const meals = S.meals.filter(m => m.dogId === d.id && m.date === (s ? s.date : UI.date));
+  let extra = '';
+  if (def.extra === 'side') extra = `<label class="f">Which foot</label>${optsHtml('side', ['Left', 'Right', 'Both'], s ? s.side : '')}`;
+  if (def.extra === 'kind') extra = `<label class="f">Type</label>${optsHtml('kind', ['Urine', 'Faecal'], s ? s.kind : '')}`;
+  if (hasSigns(def)) extra = `<label class="f">What I noticed</label>${optsHtml('signs', SIGN_OPTS, s ? s.signs || [] : [], true)}`;
+  if (def.extra === 'stool') extra = `<label class="f">Stool</label>${optsHtml('kind', ['Normal', 'Soft', 'Diarrhoea', 'Mucus', 'Blood'], s ? s.kind : '')}`;
+  openSheet(`<h2>${esc(def.label)}</h2>
+    ${def.id === 'other' ? `<label class="f">What</label><input class="i" id="sCustom" value="${esc(s && s.custom || '')}">` : ''}
+    <label class="f">Time</label><input class="i" type="time" id="sTime" value="${esc(s ? s.time : nowHM())}">
+    ${extra}
+    ${def.event ? '' : `<label class="f">Severity</label>${optsHtml('sev', ['Mild', 'Moderate', 'Severe'], s ? s.severity : '')}
+    <label class="f">What did we do</label>${optsHtml('actions', ACTION_OPTS, s ? s.actions || [] : [], true)}
+    <input class="i" id="sAction" style="margin-top:6px" value="${esc(s && s.actionNote || '')}" placeholder="Details, e.g. which medication">
+    <label class="f">Resolved at</label><input class="i" type="time" id="sResolved" value="${esc(s && s.resolved || '')}">
+    <p class="small muted" style="margin:4px 0 0">Leave blank if it's still going. Come back and fill it in later.</p>`}
+    ${meals.length ? `<label class="f">Linked to a meal</label><select class="i" id="sMeal"><option value="">None</option>${meals.map(m => `<option value="${m.id}" ${s && s.mealId === m.id ? 'selected' : ''}>${esc(cap(mealLabel(m)))}</option>`).join('')}</select>` : ''}
+    <label class="f">Note</label><textarea class="i" id="sNote" placeholder="Optional">${esc(s ? s.note : '')}</textarea>
+    <div class="actions">${s ? `<button class="btn danger" data-act="entryDel" data-kind="sym" data-id="${s.id}">Delete</button>` : ''}<button class="btn" data-act="closeSheet">Cancel</button><button class="btn pri" data-act="symSave" data-type="${esc(def.id)}" data-id="${s ? s.id : ''}">Save</button></div>`);
+}
+
+/* ---------- sheets: meds ---------- */
+function slotRowsHtml(slots) {
+  return slots.map((s, i) => `<div class="row slotrow" style="margin:6px 0"><input class="i" type="time" style="width:112px;flex:0 0 112px" value="${esc(s.t)}" data-f="t"><input class="i" value="${esc(s.dose)}" placeholder="Dose" data-f="dose"><input class="i" value="${esc(s.label)}" placeholder="e.g. with dinner" data-f="label"><button class="x btn sm ghost" data-act="slotDel" aria-label="Remove time">✕</button></div>`).join('');
+}
+function openMedEdit(id) {
+  const d = dog(); const m = id ? S.meds.find(x => x.id === id) : { name: '', cat: 'med', slots: [{ t: '', dose: '', label: '' }], schedule: { type: 'daily' }, note: '', paused: false, history: [] };
+  const s = m.schedule || { type: 'daily' };
+  openSheet(`<h2>${id ? 'Edit' : 'Add'} ${m.cat === 'med' ? 'medication' : 'supplement'}</h2>
+    <label class="f">Name</label><input class="i" id="eName" value="${esc(m.name)}">
+    <label class="f">Type</label>${optsHtml('cat', [{ v: 'med', l: 'Medication' }, { v: 'supp', l: 'Supplement' }], m.cat)}
+    <label class="f">Schedule</label>${optsHtml('sched', [{ v: 'daily', l: 'Daily' }, { v: 'alternate', l: 'Every second day' }, { v: 'monthly', l: 'Monthly' }, { v: 'quarterly', l: 'Quarterly' }, { v: 'prn', l: 'As needed' }], s.type)}
+    <div data-show="alternate"><label class="f">Start date for every second day</label><input class="i" type="date" id="eAnchor" value="${esc(s.anchor || UI.today)}"></div>
+    <div data-show="monthly quarterly"><label class="f">Day of month</label><input class="i" type="number" min="1" max="28" id="eDay" value="${esc(s.day || 1)}" style="width:90px"></div>
+    <div data-show="quarterly"><label class="f">Quarterly months</label>${optsHtml('months', MONTHS.map((l, i) => ({ v: String(i + 1), l })), (s.months || []).map(String), true)}</div>
+    <div data-show="daily alternate"><label class="f">Times and doses</label><div id="eSlots">${slotRowsHtml(m.slots.length ? m.slots : [{ t: '', dose: '', label: '' }])}</div>
+    <button class="btn sm" style="margin-top:4px" data-act="slotAdd">+ Add another time</button></div>
+    <label class="f">Notes</label><textarea class="i" id="eNote">${esc(m.note)}</textarea>
+    <label class="f">Status</label>${optsHtml('paused', [{ v: 'no', l: 'Active' }, { v: 'yes', l: 'Paused' }], m.paused ? 'yes' : 'no')}
+    ${id ? `<label class="f">Reason for this change (goes in the history)</label><input class="i" id="eReason" placeholder="e.g. vet reduced dose">` : ''}
+    ${id && m.history.length ? `<h3 style="margin-top:16px">History</h3>` + m.history.slice().reverse().map(x => `<div class="entry"><span class="tm">${esc(fmtShort(x.date))}</span><div class="body small pre">${esc(x.text)}</div></div>`).join('') : ''}
+    <div class="actions">${id ? `<button class="btn danger" data-act="medDel" data-id="${id}">Delete</button>` : ''}<button class="btn" data-act="closeSheet">Cancel</button><button class="btn pri" data-act="medSave" data-id="${id || ''}">Save</button></div>`);
+}
+function schedFields() {
+  const t = optVal('sched') || 'daily';
+  $$('[data-show]').forEach(el => { el.style.display = el.dataset.show.split(' ').includes(t) ? '' : 'none'; });
+}
+function describeMed(m) {
+  return `${m.name}. ${schedText(m)}${m.slots.length ? ': ' + m.slots.map(s => [s.t, s.dose, s.label].filter(Boolean).join(' ')).join('; ') : ''}${m.paused ? ' (paused)' : ''}`;
+}
+function openInjEdit(id) {
+  const d = dog(); const i = id ? S.injections.find(x => x.id === id) : { name: '', every: 28, unit: 'days', note: '', doses: [] };
+  openSheet(`<h2>${id ? esc(i.name) : 'Add injection'}</h2>
+    <label class="f">Name</label><input class="i" id="iName" value="${esc(i.name)}">
+    <label class="f">Target interval</label><div class="row"><input class="i" type="number" id="iEvery" value="${esc(i.every)}" style="width:100px">${optsHtml('unit', ['days', 'months'], i.unit)}</div>
+    <label class="f">Note</label><input class="i" id="iNote" value="${esc(i.note)}">
+    <h3 style="margin-top:16px">Doses given</h3>${i.doses.length ? i.doses.slice().sort((a, b) => a.date < b.date ? 1 : -1).map(x => `<div class="entry"><span class="tm">${esc(fmtShort(x.date))}</span><div class="body small">${esc(x.note || '')}</div><button class="x" data-act="injDoseDel" data-id="${id}" data-date="${x.date}" aria-label="Delete">✕</button></div>`).join('') : '<p class="empty">None yet</p>'}
+    <div class="row" style="margin-top:8px"><input class="i" type="date" id="iDate" value="${UI.today}"><input class="i" id="iDoseNote" placeholder="Dose or note"></div>
+    <div class="actions">${id ? `<button class="btn danger" data-act="injDel" data-id="${id}">Delete</button>` : ''}<button class="btn" data-act="closeSheet">Cancel</button><button class="btn pri" data-act="injSave" data-id="${id || ''}">Save</button></div>
+    <p class="small muted">A date in the field above is added as a dose when you save. Clear it if you are only changing the name or interval.</p>`);
+}
+function openDogEdit(id) {
+  const d = S.dogs.find(x => x.id === id);
+  openSheet(`<h2>${esc(d.name)}</h2>
+    <label class="f">Name</label><input class="i" id="gName" value="${esc(d.name)}">
+    <label class="f">Breed</label><input class="i" id="gBreed" value="${esc(d.breed)}">
+    <label class="f">Sex</label><input class="i" id="gSex" value="${esc(d.sex)}">
+    <label class="f">Born (year and month)</label><input class="i" type="month" id="gDob" value="${esc(d.dob)}">
+    ${d.status === 'coming' ? `<label class="f">Arriving (year and month)</label><input class="i" type="month" id="gDue" value="${esc(d.due)}">
+    <label class="f">Status</label>${optsHtml('status', [{ v: 'coming', l: 'Coming' }, { v: 'home', l: 'Home' }], d.status)}` : ''}
+    ${d.status !== 'coming' ? `<label class="f">Sleep tracking card on Today</label>${optsHtml('track', [{ v: 'yes', l: 'Show' }, { v: 'no', l: 'Hide' }], d.trackSleep ? 'yes' : 'no')}` : ''}
+    <label class="f">Conditions (one per line)</label><textarea class="i" id="gCond">${esc(d.conditions)}</textarea>
+    <label class="f">History (one per line)</label><textarea class="i" id="gHist">${esc(d.history)}</textarea>
+    <label class="f">Do not give (one per line)</label><textarea class="i" id="gAvoid">${esc(d.avoid)}</textarea>
+    <label class="f">Cautions (one per line)</label><textarea class="i" id="gCaut">${esc(d.cautions)}</textarea>
+    <label class="f">Symptom buttons (one per line)</label><textarea class="i" id="gSym">${esc(d.symptoms.map(s => s.label).join('\n'))}</textarea>
+    <label class="f">Meal slots (one per line, optional time after a comma, e.g. "Dinner, 18:00")</label><textarea class="i" id="gMeals">${esc(d.mealSlots.map(s => s.label + (s.time ? ', ' + s.time : '') + (s.optional ? ', optional' : '')).join('\n'))}</textarea>
+    <div class="actions"><button class="btn" data-act="closeSheet">Cancel</button><button class="btn pri" data-act="dogSave" data-id="${d.id}">Save</button></div>`);
+}
+
+/* ---------- backup ---------- */
+async function doExport() {
+  const stamp = new Date(); const name = `big-loves-backup-${dk(stamp)}.json`;
+  const blob = new Blob([JSON.stringify(S)], { type: 'application/json' });
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const download = () => {
+    const url = URL.createObjectURL(blob); const a = document.createElement('a');
+    a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  };
+  const done = msg => { S.lastBackup = stamp.toISOString(); save(); render(); toast(msg); };
+  if (isIOS) {
+    try {
+      const file = new File([blob], name, { type: 'application/json' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: 'Big Loves backup' });
+        return done('Backup exported');
+      }
+    } catch (e) { if (e && e.name === 'AbortError') return; }
+  }
+  try { download(); done('Backup saved to Downloads: ' + name); }
+  catch (e) { toast('Export did not finish: ' + (e && e.message ? e.message : 'unknown error')); }
+}
+function doImport(file) {
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(r.result);
+      if (!data || !data.dogs || !data.meds) throw new Error('bad');
+      if (hasDogs() && !confirm('Replace everything in the app with this file?')) return;
+      S = data; migrate(); UI.dog = S.dogs[0] ? S.dogs[0].id : ''; UI.tab = 'today'; save(); render(); toast('Loaded');
+    } catch (e) { toast('That file is not a Big Loves backup or starter file'); }
+  };
+  r.readAsText(file);
+}
+function doPhoto(id, file) {
+  const r = new FileReader();
+  r.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const size = 320; const c = document.createElement('canvas'); c.width = c.height = size;
+      const s = Math.min(img.width, img.height); const ctx = c.getContext('2d');
+      ctx.drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, size, size);
+      S.dogs.find(x => x.id === id).photo = c.toDataURL('image/jpeg', .82); save(); render(); toast('Photo saved');
+    };
+    img.src = r.result;
+  };
+  r.readAsDataURL(file);
+}
+
+/* ---------- actions ---------- */
+let pendingPhoto = null;
+const A = {
+  closeSheet: () => closeSheet(),
+  dog: el => { UI.dog = el.dataset.id; window.scrollTo(0, 0); render(); },
+  tab: el => { UI.tab = el.dataset.id; window.scrollTo(0, 0); render(); },
+  day: el => { const n = +el.dataset.n; UI.date = n === 0 ? UI.today : addDays(UI.date, n); if (UI.date > UI.today) UI.date = UI.today; render(); },
+  opt: el => {
+    const g = el.parentElement;
+    if (g.dataset.multi) el.classList.toggle('on');
+    else { const was = el.classList.contains('on'); g.querySelectorAll('.opt').forEach(o => o.classList.remove('on')); if (!was || g.dataset.group === 'st' || g.dataset.group === 'cat' || g.dataset.group === 'sched' || g.dataset.group === 'paused' || g.dataset.group === 'unit' || g.dataset.group === 'status' || g.dataset.group === 'atype' || g.dataset.group === 'track' || g.dataset.group === 'ckind') el.classList.add('on'); }
+    if (g.dataset.group === 'sched') schedFields();
+    if (g.dataset.group === 'foods') renderMealItems();
+    if (g.dataset.group === 'ckind') ckFields();
+  },
+  tick: el => {
+    const id = el.dataset.id, slot = +el.dataset.slot; const e = doseEntry(id, UI.date, slot);
+    const m = S.meds.find(x => x.id === id);
+    if (e) setDose(id, UI.date, slot, null); else setDose(id, UI.date, slot, 'given', tickTime(m.slots[slot]));
+    render();
+  },
+  tickAll: el => {
+    const t = el.dataset.t; const d = dog();
+    dogMeds(d.id).filter(m => !['monthly', 'quarterly', 'prn'].includes((m.schedule || {}).type) && isDueOn(m, UI.date)).forEach(m => m.slots.forEach((sl, idx) => {
+      if ((sl.t || 'Anytime') === t && !doseEntry(m.id, UI.date, idx) && !isHeld(m, UI.date, sl)) setDose(m.id, UI.date, idx, 'given', tickTime(sl));
+    }));
+    render(); toast(((S.settings || {}).tickTime === 'now' && UI.date === UI.today) ? 'Marked as given now' : 'Marked as given at ' + t);
+  },
+  tickP: el => { const m = S.meds.find(x => x.id === el.dataset.id); S.doses.push({ id: uid(), dogId: m.dogId, medId: m.id, date: UI.date, slot: 0, status: 'given', time: nowHM(), dose: '' }); save(); render(); toast(m.name + ' logged'); },
+  doseOpts: el => openDoseOpts(el.dataset.id, +el.dataset.slot),
+  doseSave: el => {
+    const st = optVal('st') || 'given'; setDose(el.dataset.id, UI.date, +el.dataset.slot, st, $('#dTime').value);
+    const e = doseEntry(el.dataset.id, UI.date, +el.dataset.slot); if (e) { e.note = $('#dNote').value.trim(); save(); }
+    closeSheet(); render();
+  },
+  doseClear: el => { setDose(el.dataset.id, UI.date, +el.dataset.slot, null); closeSheet(); render(); },
+  extraDose: () => openExtraDose(),
+  extraSave: el => {
+    const medId = $('#xMed').value; const m = S.meds.find(x => x.id === medId);
+    const data = { medId, dogId: m.dogId, dose: $('#xDose').value.trim(), time: $('#xTime').value, reason: optVal('reason'), note: $('#xNote').value.trim() };
+    if (el.dataset.id) Object.assign(S.doses.find(x => x.id === el.dataset.id), data);
+    else S.doses.push(Object.assign({ id: uid(), date: UI.date, slot: null, status: 'extra' }, data));
+    save(); closeSheet(); render(); toast('Extra dose logged');
+  },
+  prn: el => { const m = S.meds.find(x => x.id === el.dataset.id); openSheet(`<h2>${esc(m.name)}</h2><label class="f">Time given</label><input class="i" type="time" id="pTime" value="${nowHM()}"><label class="f">Note</label><input class="i" id="pNote" placeholder="Optional"><div class="actions"><button class="btn" data-act="closeSheet">Cancel</button><button class="btn pri" data-act="prnSave" data-id="${m.id}">Save</button></div>`); },
+  prnSave: el => { const m = S.meds.find(x => x.id === el.dataset.id); S.doses.push({ id: uid(), dogId: m.dogId, medId: m.id, date: UI.date, slot: null, status: 'prn', time: $('#pTime').value || nowHM(), dose: '', note: $('#pNote').value.trim() }); save(); closeSheet(); render(); toast(m.name + ' logged'); },
+  tickSetting: el => { S.settings = Object.assign({}, S.settings, { tickTime: el.dataset.v }); save(); render(); },
+  foodAddList: () => { const lines = document.getElementById('foodNew').value.split('\n').map(x => x.trim()).filter(Boolean); let n = 0; lines.forEach(v => { if (!S.foods.includes(v)) { S.foods.push(v); n++; } }); if (!n) return toast('Nothing new to add'); save(); render(); toast(n + ' food' + (n === 1 ? '' : 's') + ' added'); },
+  focusOpen: el => openFocus(el.dataset.id || null),
+  focusSave: el => {
+    const text = $('#fText').value.trim(); if (!text) return toast('Add what you are focusing on');
+    const data = { text, start: $('#fStart').value || UI.today, notes: $('#fNotes').value.trim() };
+    if (el.dataset.id) Object.assign(S.focus.find(x => x.id === el.dataset.id), data); else S.focus.push(Object.assign({ id: uid(), dogId: UI.dog, done: null }, data));
+    save(); closeSheet(); render(); toast('Focus saved');
+  },
+  focusDone: el => { const x = S.focus.find(f => f.id === el.dataset.id); x.text = $('#fText').value.trim() || x.text; x.notes = $('#fNotes').value.trim(); x.outcome = ($('#fOutcome') || {}).value || ''; x.done = UI.today; save(); closeSheet(); render(); toast('Moved to past focus in Dogs'); },
+  focusDel: el => { if (!confirm('Delete this focus?')) return; S.focus = S.focus.filter(x => x.id !== el.dataset.id); save(); closeSheet(); render(); },
+  apptOpen: el => openAppt(el.dataset.id || null),
+  apptSave: el => {
+    const date = $('#aDate').value; if (!date) return toast('Choose a date');
+    const data = { date, time: $('#aTime').value, type: optVal('atype') || 'Other', with: $('#aWith').value.trim(), note: $('#aNote').value.trim() };
+    if (el.dataset.id) Object.assign(S.appts.find(x => x.id === el.dataset.id), data); else S.appts.push(Object.assign({ id: uid(), dogId: UI.dog }, data));
+    save(); closeSheet(); render(); toast('Appointment saved');
+  },
+  apptDel: el => { if (!confirm('Delete this appointment?')) return; S.appts = S.appts.filter(x => x.id !== el.dataset.id); save(); closeSheet(); render(); },
+  logMode: el => { UI.logMode = el.dataset.v; render(); },
+  linkSym: el => { UI.linkSym = el.dataset.v; render(); },
+  linkWin: el => { UI.linkWin = +el.dataset.v; render(); },
+  foodRename: el => { const i = +el.dataset.i; const v = prompt('Rename food', S.foods[i]); if (v && v.trim()) { const old = S.foods[i]; S.foods[i] = v.trim(); S.meals.forEach(m => { m.foods = (m.foods || []).map(f => f === old ? v.trim() : f); }); save(); render(); } },
+  foodDel: el => { const i = +el.dataset.i; if (!confirm('Remove "' + S.foods[i] + '" from the list? Meals already logged keep it.')) return; S.foods.splice(i, 1); save(); render(); },
+  injLog: el => { const i = S.injections.find(x => x.id === el.dataset.id); openInjEdit(i.id); },
+  injEdit: el => openInjEdit(el.dataset.id || null),
+  injSave: el => {
+    const name = $('#iName').value.trim(); if (!name) return toast('Add a name first');
+    let i = el.dataset.id ? S.injections.find(x => x.id === el.dataset.id) : null;
+    if (!i) { i = { id: uid(), dogId: UI.dog, doses: [] }; S.injections.push(i); }
+    Object.assign(i, { name, every: +$('#iEvery').value || 1, unit: optVal('unit') || 'days', note: $('#iNote').value.trim() });
+    const dt = $('#iDate').value; if (dt && !i.doses.find(x => x.date === dt)) i.doses.push({ date: dt, note: $('#iDoseNote').value.trim() });
+    save(); closeSheet(); render(); toast('Saved');
+  },
+  injDoseDel: el => { const i = S.injections.find(x => x.id === el.dataset.id); if (!confirm('Delete the dose on ' + fmtDate(el.dataset.date, true) + '?')) return; i.doses = i.doses.filter(x => x.date !== el.dataset.date); save(); openInjEdit(i.id); render(); },
+  injDel: el => { if (!confirm('Delete this injection and its history?')) return; S.injections = S.injections.filter(x => x.id !== el.dataset.id); save(); closeSheet(); render(); },
+  mealOpen: el => openMeal(el.dataset.slot, el.dataset.id),
+  foodAdd: () => {
+    const v = $('#mNewFood').value.trim(); if (!v) return;
+    if (!S.foods.includes(v)) S.foods.push(v); save();
+    const g = $('.opts[data-group="foods"]'); const b = document.createElement('button');
+    b.type = 'button'; b.className = 'opt on'; b.dataset.act = 'opt'; b.dataset.v = v; b.textContent = v; g.appendChild(b); $('#mNewFood').value = ''; renderMealItems();
+  },
+  mealSave: el => {
+    const foods = $$('.opts[data-group="foods"] .opt.on').map(b => b.dataset.v);
+    const items = readMealItems();
+    const data = { foods, items, outcome: optVal('outcome'), sprinkles: optVal('sprinkles'), eat: optVal('eat'), dish: optVal('dish'), time: $('#mTime').value, note: $('#mNote').value.trim() };
+    if (el.dataset.id) Object.assign(S.meals.find(x => x.id === el.dataset.id), data);
+    else S.meals.push(Object.assign({ id: uid(), dogId: UI.dog, date: UI.date, slot: el.dataset.slot || '' }, data));
+    save(); closeSheet(); render(); toast('Meal saved');
+  },
+  symOpen: el => openSym(el.dataset.type),
+  symSave: el => {
+    const g = id => { const x = $(id); return x ? x.value.trim() : ''; };
+    const data = { time: g('#sTime'), severity: optVal('sev'), side: optVal('side'), kind: optVal('kind'), actions: $$('.opts[data-group="actions"] .opt.on').map(b => b.dataset.v), signs: $$('.opts[data-group="signs"] .opt.on').map(b => b.dataset.v), actionNote: g('#sAction'), resolved: g('#sResolved'), mealId: g('#sMeal'), note: g('#sNote'), custom: g('#sCustom') };
+    if (el.dataset.id) Object.assign(S.symptoms.find(x => x.id === el.dataset.id), data);
+    else S.symptoms.push(Object.assign({ id: uid(), dogId: UI.dog, date: UI.date, type: el.dataset.type }, data));
+    save(); closeSheet(); render(); toast('Saved');
+  },
+  entryOpen: el => {
+    const { kind, id } = el.dataset;
+    if (kind === 'sym') { const s = S.symptoms.find(x => x.id === id); if (s.sleepId && S.sleeps.find(z => z.id === s.sleepId)) openSleep(s.sleepId, false); else openSym(s.type, id); }
+    else if (kind === 'meal') { const m = S.meals.find(x => x.id === id); openMeal(m.slot, id); }
+    else if (kind === 'dose') {
+      const x = S.doses.find(y => y.id === id);
+      if (x.status === 'extra') openExtraDose(x);
+      else openSheet(`<h2>${esc(medName(x.medId))}</h2><p class="muted">${esc(fmtDate(x.date, true))}</p><label class="f">Time</label><input class="i" type="time" id="eTime" value="${esc(x.time)}"><div class="actions"><button class="btn danger" data-act="entryDel" data-kind="dose" data-id="${id}">Delete</button><button class="btn pri" data-act="doseTimeSave" data-id="${id}">Save</button></div>`);
+    }
+  },
+  doseTimeSave: el => { const x = S.doses.find(y => y.id === el.dataset.id); x.time = $('#eTime').value || x.time; save(); closeSheet(); render(); toast('Saved'); },
+  entryDel: el => {
+    if (!confirm('Delete this entry?')) return;
+    const { kind, id } = el.dataset;
+    if (kind === 'sym') S.symptoms = S.symptoms.filter(x => x.id !== id);
+    if (kind === 'meal') { S.meals = S.meals.filter(x => x.id !== id); S.symptoms.forEach(s => { if (s.mealId === id) s.mealId = ''; }); }
+    if (kind === 'dose') S.doses = S.doses.filter(x => x.id !== id);
+    save(); closeSheet(); render(); toast('Deleted');
+  },
+  logMore: () => { UI.logDays += 60; render(); },
+  medEdit: el => { openMedEdit(el.dataset.id || null); schedFields(); },
+  slotAdd: () => { $('#eSlots').insertAdjacentHTML('beforeend', slotRowsHtml([{ t: '', dose: '', label: '' }])); },
+  slotDel: el => { el.closest('.slotrow').remove(); },
+  medSave: el => {
+    const name = $('#eName').value.trim(); if (!name) return toast('Add a name first');
+    const type = optVal('sched') || 'daily';
+    const schedule = { type };
+    if (type === 'alternate') schedule.anchor = $('#eAnchor').value || UI.today;
+    if (type === 'monthly' || type === 'quarterly') schedule.day = Math.min(28, Math.max(1, +$('#eDay').value || 1));
+    if (type === 'quarterly') schedule.months = $$('.opts[data-group="months"] .opt.on').map(b => +b.dataset.v).sort((a, b) => a - b);
+    const slots = $$('#eSlots .slotrow').map(r => ({ t: r.querySelector('[data-f="t"]').value, dose: r.querySelector('[data-f="dose"]').value.trim(), label: r.querySelector('[data-f="label"]').value.trim() })).filter(s => s.t || s.dose || s.label);
+    if (type !== 'prn' && !slots.length) slots.push({ t: '', dose: '', label: '' });
+    const keepSlots = (type === 'monthly' || type === 'quarterly') ? [{ t: '', dose: slots[0] ? slots[0].dose : '', label: '' }] : slots;
+    const data = { name, cat: optVal('cat') || 'med', schedule, slots: type === 'prn' ? [] : keepSlots, note: $('#eNote').value.trim(), paused: optVal('paused') === 'yes' };
+    if (el.dataset.id) {
+      const m = S.meds.find(x => x.id === el.dataset.id); const before = describeMed(m);
+      Object.assign(m, data); const after = describeMed(m);
+      if (before !== after) m.history.push({ date: UI.today, text: 'Changed to: ' + after + (($('#eReason') || {}).value ? '\nReason: ' + $('#eReason').value.trim() : '') });
+    } else {
+      const m = Object.assign({ id: uid(), dogId: UI.dog, dose: '', history: [] }, data); m.history.push({ date: UI.today, text: 'Added: ' + describeMed(m) }); S.meds.push(m);
+    }
+    save(); closeSheet(); render(); toast('Saved');
+  },
+  medDel: el => { if (!confirm('Delete this medication? Its dose log stays in the Log.')) return; S.meds = S.meds.filter(x => x.id !== el.dataset.id); save(); closeSheet(); render(); },
+  marker: el => openMarker(el.dataset.k),
+  bloodRange: el => { UI.bloodRange = el.dataset.v; openMarker(el.dataset.k); },
+  bloodAdd: () => openBloodAdd(null),
+  bloodEdit: el => openBloodAdd(el.dataset.date),
+  bloodSave: el => {
+    const date = el.dataset.date || $('#bDate').value; if (!date) return toast('Choose the test date');
+    const vals = {};
+    $$('input[data-k]').forEach(inp => { const v = inp.value.trim(); if (!v) return; const n = Number(v.replace(',', '.')); vals[inp.dataset.k] = isNaN(n) ? { t: v } : { v: n }; });
+    if (!Object.keys(vals).length) return toast('No values entered');
+    const list = S.bloods[UI.dog] = S.bloods[UI.dog] || [];
+    let r = list.find(x => x.date === date);
+    if (!r) { r = { date, precision: 'day', values: {} }; list.push(r); }
+    if (el.dataset.date) { Object.keys(r.values).forEach(k => { if (!vals[k] && !(r.values[k].low != null)) delete r.values[k]; }); }
+    Object.keys(vals).forEach(k => { r.values[k] = Object.assign({}, r.values[k] && r.values[k].low != null ? { low: r.values[k].low, high: r.values[k].high } : {}, vals[k]); });
+    save(); closeSheet(); render(); toast('Results saved');
+  },
+  bloodDates: () => openBloodDates(),
+  bloodDate: el => openBloodDate(el.dataset.date),
+  bloodDel: el => { if (!confirm('Delete all results for ' + fmtDate(el.dataset.date, true) + '?')) return; S.bloods[UI.dog] = S.bloods[UI.dog].filter(x => x.date !== el.dataset.date); save(); closeSheet(); render(); },
+  photo: el => { pendingPhoto = el.dataset.id; const i = document.getElementById('photoIn'); i.value = ''; i.click(); },
+  dogEdit: el => openDogEdit(el.dataset.id),
+  dogSave: el => {
+    const d = S.dogs.find(x => x.id === el.dataset.id);
+    const v = id => { const x = $(id); return x ? x.value.trim() : ''; };
+    Object.assign(d, { name: v('#gName') || d.name, breed: v('#gBreed'), sex: v('#gSex'), dob: v('#gDob'), conditions: v('#gCond'), history: v('#gHist'), avoid: v('#gAvoid'), cautions: v('#gCaut') });
+    if (optVal('track')) d.trackSleep = optVal('track') === 'yes';
+    if ($('#gDue')) { d.due = v('#gDue'); d.status = optVal('status') || d.status; }
+    const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    d.symptoms = v('#gSym').split('\n').map(x => x.trim()).filter(Boolean).map(l => { const old = d.symptoms.find(s => s.label === l); return old || { id: slug(l), label: l }; });
+    if (!d.symptoms.find(s => s.id === 'other')) d.symptoms.push({ id: 'other', label: 'Other' });
+    d.mealSlots = v('#gMeals').split('\n').map(x => x.trim()).filter(Boolean).map(line => {
+      const parts = line.split(',').map(x => x.trim()); const label = parts[0];
+      const time = parts.find(p => /^\d{1,2}:\d{2}$/.test(p)) || ''; const optional = parts.some(p => p.toLowerCase() === 'optional');
+      const old = d.mealSlots.find(s => s.label === label);
+      return { id: old ? old.id : slug(label), label, time: time.length === 4 ? '0' + time : time, optional };
+    });
+    save(); closeSheet(); render(); toast('Saved');
+  },
+  export: () => doExport(),
+  import: () => { const i = document.getElementById('importIn'); i.value = ''; i.click(); }
+};
+
+Object.assign(A, SLEEP_ACTIONS, ROUTINE_ACTIONS);
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]'); if (!el) return;
+  const fn = A[el.dataset.act]; if (fn) { e.preventDefault(); fn(el); }
+});
+document.addEventListener('change', e => {
+  if (e.target.id === 'dayNote') { const k = noteKey(e.target.dataset.dog, e.target.dataset.date); const v = e.target.value.trim(); if (v) S.dayNotes[k] = v; else delete S.dayNotes[k]; save(); toast('Note saved'); }
+  if (e.target.id === 'photoIn' && e.target.files[0] && pendingPhoto) doPhoto(pendingPhoto, e.target.files[0]);
+  if (e.target.id === 'importIn' && e.target.files[0]) doImport(e.target.files[0]);
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+
+/* ---------- day rollover after the phone sleeps ---------- */
+function checkRollover() {
+  const t = dk(); if (t !== UI.today) { const wasToday = UI.date === UI.today; UI.today = t; if (wasToday) UI.date = t; render(); }
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) checkRollover(); });
+window.addEventListener('focus', checkRollover);
+setInterval(checkRollover, 60000);
+
+/* ---------- start ---------- */
+load(); render();
+if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {})); }
+
+</script>
+</body>
+</html>
